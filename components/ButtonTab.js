@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-import Colors from '../../constants/colors';
+import {Colors} from '../constants/Colors';
 
-const IssueButton = props => {
+const ButtonTab = props => {
   return (
     <View style={{ ...styles.button, ...props.style }}>
       <Text style={styles.buttonText}>{props.children}</Text>
@@ -11,23 +11,24 @@ const IssueButton = props => {
   );
 };
 
+console.log('file-Colors.primary :', Colors.primary);
 const styles = StyleSheet.create({
   button: {
     marginRight: 10,
-    paddingVertical: 3,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    borderColor: Colors.accent,
-    borderWidth: 1,
-    backgroundColor: Colors.primary,
+    paddingVertical: 7,
+    paddingHorizontal: 27,
+    borderRadius: 20,
+    borderColor: Colors.primary,
+    borderWidth: 2,
+    // backgroundColor: Colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   buttonText: {
-    color: 'black',
-    fontFamily: 'OpenSans-Regular',
+    color: Colors.primary,
+    fontFamily: 'OpenSans-Bold',
     fontSize: 14,
   },
 });
 
-export default IssueButton;
+export default ButtonTab;

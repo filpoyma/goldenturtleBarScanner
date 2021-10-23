@@ -1,19 +1,21 @@
-import { Ionicons } from "@expo/vector-icons";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createStackNavigator } from "@react-navigation/stack";
-import * as React from "react";
+import React from "react";
+import {Ionicons} from "@expo/vector-icons";
+import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
+import {createStackNavigator} from "@react-navigation/stack";
+// import FAwesomeIcon from "react-native-vector-icons/FontAwesome5";
+import {Image, TouchableOpacity} from "react-native";
 
-import Colors from "../constants/Colors";
+// import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
 import BarCodeScanScreen from "../screens/BarCodeScanScreen";
 import AboutScreen from "../screens/AboutScreen";
+import ButtonTab from "../components/ButtonTab";
 
-import FAwesomeIcon from "react-native-vector-icons/FontAwesome5";
 
 const BottomTab = createBottomTabNavigator();
 
 export default function BottomTabNavigator() {
-  const colorScheme = useColorScheme();
+  // const colorScheme = useColorScheme();
 
   return (
     <BottomTab.Navigator initialRouteName="BarCodeScan">
@@ -23,8 +25,15 @@ export default function BottomTabNavigator() {
         options={{
           title: "",
           headerShown: false,
-          tabBarIcon: ({ color }) => (
-            <FAwesomeIcon name="qrcode" size={25} color={color} style={{ marginBottom: -10 }}/>
+          tabBarShowLabel: false,
+          tabBarIcon: ({color}) => (
+            <Image source={require('../assets/images/search.png')}
+                          style={{
+                            width: 35,
+                            height: 35,
+                            opacity: color === "#2f95dc" ? 1 : 0.7
+                          }}
+            />
           ),
           tabBarActiveTintColor: "#2f95dc",
           tabBarStyle: [
@@ -41,20 +50,41 @@ export default function BottomTabNavigator() {
         options={{
           title: "",
           headerShown: false,
-          tabBarIcon: ({ color }) => (
-            <FAwesomeIcon name="info-circle" size={25} color={color} style={{ marginBottom: -10 }}/>
+          tabBarShowLabel: false,
+          tabBarIcon: ({color}) => (
+            <ButtonTab >
+                 ПОИСК
+            </ButtonTab>
           ),
         }}
       />
+      <BottomTab.Screen name="Settings"
+                        component={AboutNavigator}
+                        options={({navigation}) => ({
+                          title: "",
+                          tabBarShowLabel: false,
+                          tabBarButton: props => <TouchableOpacity {...props} onPress={() => console.log('FLAASH')}/>,
+                          tabBarIcon: ({color}) => (
+                            <Image source={require('../assets/images/torch.png')}
+                                   style={{
+                                     width: 35,
+                                     height: 35
+                                   }}
+                            /> )
+
+                        })
+
+                        }/>
     </BottomTab.Navigator>
+
   );
 }
 
 // You can explore the built-in icon families and icons on the web at:
 // https://icons.expo.fyi/
-function TabBarIcon(props) {
-  return <Ionicons size={30} style={{ marginBottom: -3 }} {...props} />;
-}
+// function TabBarIcon(props) {
+//   return <Ionicons size={30} style={{marginBottom: -3}} {...props} />;
+// }
 
 // Each tab has its own navigation stack, you can read more about this pattern here:
 // https://reactnavigation.org/docs/tab-based-navigation#a-stack-navigator-for-each-tab
@@ -66,7 +96,7 @@ function BarCodeScanNavigator() {
       <BarCodeScanStack.Screen
         name="BarCodeScanScreen"
         component={BarCodeScanScreen}
-        options={{ headerTitle: "Scan QR Code" }}
+        options={{headerTitle: "Scan QR Code"}}
       />
     </BarCodeScanStack.Navigator>
   );
@@ -80,7 +110,7 @@ function AboutNavigator() {
       <AboutStack.Screen
         name="AboutScreen"
         component={AboutScreen}
-        options={{ headerTitle: "About" }}
+        options={{headerTitle: "About"}}
       />
     </AboutStack.Navigator>
   );

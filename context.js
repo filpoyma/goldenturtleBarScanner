@@ -1,3 +1,3 @@
 import React from 'react';
 
-export default React.createContext({ labels: [], issues: [] });
+export default React.createContext({ data: {}, setDataHandler: () => {} });

@@ -1,10 +1,11 @@
-import { Ionicons } from '@expo/vector-icons';
+// import { Ionicons } from '@expo/vector-icons';
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import * as React from 'react';
+import React from 'react';
 
-export default function useCachedResources() {
+export default function useCachedResources(setDataHandler) {
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
+
 
   // Load any resources or data that we need prior to rendering the app
   React.useEffect(() => {
@@ -13,10 +14,19 @@ export default function useCachedResources() {
         SplashScreen.preventAutoHideAsync();
 
         // Load fonts
+        // await Font.loadAsync({
+        //   ...Ionicons.font,
+        //   'space-mono': require('../assets/fonts/SpaceMono-Regular.ttf'),
+        // });
         await Font.loadAsync({
-          ...Ionicons.font,
-          'space-mono': require('../assets/fonts/SpaceMono-Regular.ttf'),
+          'OpenSans-Regular': require('../assets/fonts/OpenSans-Regular.ttf'),
         });
+        await Font.loadAsync({
+          'OpenSans-Bold': require('../assets/fonts/OpenSans-Bold.ttf'),
+        });
+        // fetch data
+        setDataHandler([{timeStamp: Date.now(), passed: true, info: 'string'}])
+
       } catch (e) {
         // We might want to provide this error information to an error reporting service
         console.warn(e);
