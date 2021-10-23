@@ -10,12 +10,14 @@ import useColorScheme from "../hooks/useColorScheme";
 import BarCodeScanScreen from "../screens/BarCodeScanScreen";
 import AboutScreen from "../screens/AboutScreen";
 import ButtonTab from "../components/ButtonTab";
+import Context from "../context";
 
 
 const BottomTab = createBottomTabNavigator();
 
 export default function BottomTabNavigator() {
   // const colorScheme = useColorScheme();
+  const { setTorchHandler } = React.useContext(Context);
 
   return (
     <BottomTab.Navigator initialRouteName="BarCodeScan">
@@ -63,7 +65,7 @@ export default function BottomTabNavigator() {
                         options={({navigation}) => ({
                           title: "",
                           tabBarShowLabel: false,
-                          tabBarButton: props => <TouchableOpacity {...props} onPress={() => console.log('FLAASH')}/>,
+                          tabBarButton: props => <TouchableOpacity {...props} onPress={setTorchHandler}/>,
                           tabBarIcon: ({color}) => (
                             <Image source={require('../assets/images/torch.png')}
                                    style={{

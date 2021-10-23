@@ -14,8 +14,13 @@ import Context from "./context";
 export default function App() {
   // data: [{timeStamp: data-time, passed: boolean, info: string}]
   const [data, setData] = React.useState([]);
+  const [isTorch, setTorch] = React.useState(false);
+  console.log('file-isTorch :', isTorch);
   const setDataHandler = (data) => {
     setData(data);
+  };
+  const setTorchHandler = () => {
+    setTorch((state) => !state);
   };
   const isLoadingComplete = useCachedResources(setDataHandler);
   const colorScheme = useColorScheme();
@@ -25,7 +30,7 @@ export default function App() {
   } else {
     return (
       <SafeAreaProvider>
-        <Context.Provider value={{ data, setDataHandler }}>
+        <Context.Provider value={{ data, setDataHandler, isTorch, setTorchHandler }}>
           <Navigation colorScheme={colorScheme} />
         </Context.Provider>
         <StatusBar />
