@@ -1,12 +1,12 @@
 const tintColorLight = '#2f95dc';
 const tintColorDark = '#fff';
+
 export const Colors = {
   primary: '#092341',
   accept: '#39b54a',
   privileged: '#fbb03b',
   free: '#29abe2',
-  attention: '#ff5050',
-
+  alert: '#ff5050',
 };
 
 export default {
