@@ -17,7 +17,7 @@ const BottomTab = createBottomTabNavigator();
 
 export default function BottomTabNavigator() {
   // const colorScheme = useColorScheme();
-  const { setTorchHandler } = React.useContext(Context);
+  const { setTorchHandler, isTorch } = React.useContext(Context);
 
   return (
     <BottomTab.Navigator initialRouteName="BarCodeScan">
@@ -28,6 +28,7 @@ export default function BottomTabNavigator() {
           title: "",
           headerShown: false,
           tabBarShowLabel: false,
+          tabBarActiveTintColor: "#2f95dc",
           tabBarIcon: ({color}) => (
             <Image source={require('../assets/images/search.png')}
                           style={{
@@ -37,7 +38,6 @@ export default function BottomTabNavigator() {
                           }}
             />
           ),
-          tabBarActiveTintColor: "#2f95dc",
           tabBarStyle: [
             {
               display: "flex",
@@ -53,8 +53,9 @@ export default function BottomTabNavigator() {
           title: "",
           headerShown: false,
           tabBarShowLabel: false,
+          tabBarActiveTintColor: "#2f95dc",
           tabBarIcon: ({color}) => (
-            <ButtonTab >
+            <ButtonTab style={{opacity: color === "#2f95dc" ? 1 : 0.5}}>
                  ПОИСК
             </ButtonTab>
           ),
@@ -70,7 +71,8 @@ export default function BottomTabNavigator() {
                             <Image source={require('../assets/images/torch.png')}
                                    style={{
                                      width: 35,
-                                     height: 35
+                                     height: 35,
+                                     opacity: isTorch ? 1 : 0.7
                                    }}
                             /> )
 

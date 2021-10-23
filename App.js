@@ -13,9 +13,8 @@ import Context from "./context";
 
 export default function App() {
   // data: [{timeStamp: data-time, passed: boolean, info: string}]
-  const [data, setData] = React.useState([]);
+  const [data, setData] = React.useState([]); //[{timeStamp: Date.now(), passed: true, info: 'string'}]
   const [isTorch, setTorch] = React.useState(false);
-  console.log('file-isTorch :', isTorch);
   const setDataHandler = (data) => {
     setData(data);
   };

@@ -20,7 +20,15 @@ import TICKETS from "../constants/tiketsNames";
 const type = Camera.Constants.Type.back;
 const torchOff = Camera.Constants.FlashMode.off;
 const torchOn = Camera.Constants.FlashMode.torch;
-const ticketType = TICKETS.notFound;
+
+const ticketType = TICKETS.full;
+const ticketData = {
+  name: 'СЕМЕН СЕМЕНЫЧ',
+  phone: '+73222233333',
+  number: '№123123',
+  date: new Date(),
+  email: 'goldenturtle@oml.ru'
+};
 
 
 export default function BarCodeScanScreen({navigation}) {
@@ -58,8 +66,8 @@ export default function BarCodeScanScreen({navigation}) {
   }
   return (
     <View style={styles.container}>
-      <ProgressBar width={sizes.window.finderWidth} height={14} progress={0.3}/>
-      <ScannedResult ticketType={ticketType} />
+      <ProgressBar width={sizes.window.finderWidth} height={14} total={1325} visited={900}/>
+      <ScannedResult ticketType={ticketType} ticketData={ticketData}/>
       <View style={{height: sizes.window.finderWidth}}>
         {isFocused && <Camera
           onBarCodeScanned={!scanned ? handleBarCodeScanned : undefined}
@@ -81,14 +89,14 @@ export default function BarCodeScanScreen({navigation}) {
             outerMaskOpacity={scanned ? 0.7 : 0}
             showAnimatedLine={false}
           />
-        </Camera>
-        }
-      </View>
       {scanned && (
         <View style={styles.button}>
           <Button title="Scan Again" onPress={() => setScanned(false)}/>
         </View>
       )}
+        </Camera>
+        }
+      </View>
     </View>
   );
 }
@@ -98,7 +106,7 @@ const styles = StyleSheet.create({
     flex: 1,
     // paddingTop: 10,
     paddingHorizontal: sizes.border.viewMinX,
-    justifyContent: 'space-around',
+    justifyContent: 'space-evenly',
 
   },
   camera: {
