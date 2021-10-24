@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
 import {Colors} from '../constants/Colors';
+import sizes from "../constants/Layout";
 
 const ButtonTab = props => {
   return (
@@ -11,13 +12,13 @@ const ButtonTab = props => {
   );
 };
 
-console.log('file-Colors.primary :', Colors.primary);
 const styles = StyleSheet.create({
   button: {
     marginRight: 10,
-    paddingVertical: 7,
-    paddingHorizontal: 27,
-    borderRadius: 20,
+    paddingVertical: 17,
+    // paddingHorizontal: 33,
+    width: sizes.window.width/3,
+    borderRadius: 28,
     borderColor: Colors.primary,
     borderWidth: 2,
     // backgroundColor: Colors.primary,

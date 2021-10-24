@@ -1,12 +1,12 @@
 import React from "react";
-import {Ionicons} from "@expo/vector-icons";
+// import {Ionicons} from "@expo/vector-icons";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {createStackNavigator} from "@react-navigation/stack";
 // import FAwesomeIcon from "react-native-vector-icons/FontAwesome5";
 import {Image, TouchableOpacity} from "react-native";
 
 // import Colors from "../constants/Colors";
-import useColorScheme from "../hooks/useColorScheme";
+// import useColorScheme from "../hooks/useColorScheme";
 import BarCodeScanScreen from "../screens/BarCodeScanScreen";
 import AboutScreen from "../screens/AboutScreen";
 import ButtonTab from "../components/ButtonTab";
@@ -29,11 +29,14 @@ export default function BottomTabNavigator() {
           headerShown: false,
           tabBarShowLabel: false,
           tabBarActiveTintColor: "#2f95dc",
+          backgroundColor: '#f7f7f7',
+          tabBarHideOnKeyboard: true,
+
           tabBarIcon: ({color}) => (
             <Image source={require('../assets/images/search.png')}
                           style={{
-                            width: 35,
-                            height: 35,
+                            width: 60,
+                            height: 60,
                             opacity: color === "#2f95dc" ? 1 : 0.7
                           }}
             />
@@ -41,24 +44,34 @@ export default function BottomTabNavigator() {
           tabBarStyle: [
             {
               display: "flex",
+              height: 95,
             },
             null,
           ],
         }}
       />
       <BottomTab.Screen
-        name="About"
-        component={AboutNavigator}
+        name="Search"
+        component={SearchNavigator}
+        params={'123'}
         options={{
           title: "",
           headerShown: false,
           tabBarShowLabel: false,
           tabBarActiveTintColor: "#2f95dc",
+          tabBarHideOnKeyboard: true,
           tabBarIcon: ({color}) => (
             <ButtonTab style={{opacity: color === "#2f95dc" ? 1 : 0.5}}>
                  ПОИСК
             </ButtonTab>
           ),
+          tabBarStyle: [
+            {
+              display: "flex",
+              height: 95,
+            },
+            null,
+          ],
         }}
       />
       <BottomTab.Screen name="Settings"
@@ -66,12 +79,13 @@ export default function BottomTabNavigator() {
                         options={({navigation}) => ({
                           title: "",
                           tabBarShowLabel: false,
+                          tabBarHideOnKeyboard: true,
                           tabBarButton: props => <TouchableOpacity {...props} onPress={setTorchHandler}/>,
                           tabBarIcon: ({color}) => (
                             <Image source={require('../assets/images/torch.png')}
                                    style={{
-                                     width: 35,
-                                     height: 35,
+                                     width: 60,
+                                     height: 60,
                                      opacity: isTorch ? 1 : 0.7
                                    }}
                             /> )
@@ -103,6 +117,20 @@ function BarCodeScanNavigator() {
         options={{headerTitle: "Scan QR Code"}}
       />
     </BarCodeScanStack.Navigator>
+  );
+}
+
+const SearchStack = createStackNavigator();
+
+function SearchNavigator() {
+  return (
+    <SearchStack.Navigator>
+      <SearchStack.Screen
+        name="SearchScreen"
+        component={BarCodeScanScreen}
+        options={{headerTitle: "Search"}}
+      />
+    </SearchStack.Navigator>
   );
 }
 

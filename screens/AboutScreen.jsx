@@ -4,7 +4,6 @@ import dayjs from 'dayjs'
 
 import { Text, View } from '../components/Themed';
 import Context from '../context';
-console.log('file-day :', dayjs().format('DD-MM-YYYY ').toString());
 
 export default function AboutScreen() {
   const { data } = React.useContext(Context);

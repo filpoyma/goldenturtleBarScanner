@@ -1,5 +1,4 @@
 import React from 'react';
-import {Colors} from "../constants/Colors";
 import {Text, View} from "./Themed";
 import {StyleSheet, Image} from "react-native";
 import sizes from "../constants/Layout";
@@ -8,10 +7,10 @@ import dayjs from "dayjs";
 
 const ScannedResult = ({ticketType, ticketData}) => {
 
-  if (ticketType.name === TICKETS.notFound.name)
+  if ((ticketType.name === TICKETS.notFound.name) || (ticketType.name === TICKETS.greetings.name))
     return <View style={styles.container(ticketType.color)}>
       <View style={styles.textLeft}>
-        <Text>{TICKETS.notFound.name}</Text>
+        <Text>{ticketType.name}</Text>
       </View>
       <View style={styles.image}>
         <Image
@@ -20,13 +19,14 @@ const ScannedResult = ({ticketType, ticketData}) => {
         />
       </View>
       <View style={styles.textRight}>
-        <Text>{TICKETS.notFound.name}</Text>
+        <Text>{ticketType.additional || ticketType.name}</Text>
       </View>
-    </View>
+    </View>;
+
   return <View style={styles.container(ticketType.color)}>
     <View style={styles.textLeft}>
       <Text>{ticketType.name}</Text>
-      <Text>{ticketData.number}</Text>
+      <Text>{ticketData.number.slice(0, 19)}</Text>
       <Text>{dayjs(ticketData.date).format('DD-MM-YYYY hh:mm')}</Text>
     </View>
     <View style={styles.image}>
@@ -46,24 +46,32 @@ const ScannedResult = ({ticketType, ticketData}) => {
 const styles = StyleSheet.create({
   container: (backgroundColor) => ({
     marginBottom: 12,
-    paddingHorizontal: 5,
-    paddingVertical: 5,
+    paddingHorizontal: 13,
+    paddingVertical: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: sizes.window.finderWidth,
+    // height:80,
     backgroundColor: backgroundColor,
-    // borderColor: 'black',
-    // borderWidth: 1
+    zIndex: 10
   }),
   textLeft: {
     alignItems: 'flex-start',
     justifyContent: 'center',
     backgroundColor: 'transparent',
+    width: (sizes.window.finderWidth - 90) /2,
   },
   textRight: {
     alignItems: 'flex-end',
     justifyContent: 'center',
     backgroundColor: 'transparent',
+    width: (sizes.window.finderWidth - 90) /2
+  },
+  text: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
+    width: (sizes.window.finderWidth - 90) /2
   },
   tinyLogo: {
     width: 60,
