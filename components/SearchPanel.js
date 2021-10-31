@@ -16,7 +16,7 @@ const SearchPanel = () => {
       <TextInput
         style={styles.input}
         type={'text'}
-        placeholder='имя, номер билета или эл.адрес'
+        placeholder='номер билета или эл.адрес'
         onChangeText={onChangeText}
         value={text}
         onSubmitEditing={onSubmit}

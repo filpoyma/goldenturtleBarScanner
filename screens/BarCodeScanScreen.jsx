@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 
 import { useIsFocused } from "@react-navigation/native";
-import { Button, StyleSheet } from "react-native";
+import { Button, StyleSheet, Alert } from "react-native";
 import { Text, View } from "../components/Themed";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import BarcodeMask from "react-native-barcode-mask";
 import { Camera } from "expo-camera";
+
+
 import Context from "../context";
 import ProgressBar from "../components/ProgressBar";
 import ScannedResult from "../components/ScannedResult";
@@ -56,11 +58,10 @@ export default function BarCodeScanScreen({ route, navigation }) {
       ticketData.date = new Date();
       ticketData.number = data;
 
-      // Alert.alert(
-      //   "Bar code has been scanned!",
-      //   `Data: ${data} \nType: ${type}`
-      // );
-      // }
+      Alert.alert(
+        "Bar code has been scanned!",
+        `Data: ${data}`
+      );
     }
   };
 

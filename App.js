@@ -6,30 +6,53 @@ import useCachedResources from "./hooks/useCachedResources";
 import useColorScheme from "./hooks/useColorScheme";
 import Navigation from "./navigation";
 import Context from "./context";
+import MMKVStorage from "react-native-mmkv-storage";
+const MMKV = new MMKVStorage.Loader().initialize(); // Returns an MMKV Instance
 
 /**
  * @return {null}
  */
 
 export default function App() {
-  // data: [{timeStamp: data-time, passed: boolean, info: string}]
-  const [data, setData] = React.useState([]); //[{timeStamp: Date.now(), passed: true, info: 'string'}]
+  // data: {data: [
+  // {
+  //     "date": "0000-00-00",
+  //     "email": "test@test.ru",
+  //     "howmuch": "1",
+  //     "id": "1",
+  //     "name": "test",
+  //     "phone": "8-111-111-11-11",
+  //     "type": "полный",
+  //     "used": "0"}], err: }
+  const [localData, setLocalData] = React.useState({
+    data: [],
+    err: null,
+    isSync: false,
+    online: false,
+  });
   const [isTorch, setTorch] = React.useState(false);
-  const setDataHandler = (data) => {
-    setData(data);
+  const setLocalDataHandler = (data) => {
+    setLocalData(data);
   };
   const setTorchHandler = () => {
     setTorch((state) => !state);
   };
-  const isLoadingComplete = useCachedResources(setDataHandler);
+
+  const isLoadingComplete = useCachedResources(setLocalDataHandler);
   const colorScheme = useColorScheme();
-  //console.log("data", data);
+  (async () => {
+    let myArray = await MMKV.getArrayAsync("data");
+    console.log('file-myArray :', myArray);
+  })();
+  // console.log("data", localData);
   if (!isLoadingComplete) {
     return null;
   } else {
     return (
       <SafeAreaProvider>
-        <Context.Provider value={{ data, setDataHandler, isTorch, setTorchHandler }}>
+        <Context.Provider
+          value={{ localData, setLocalDataHandler, isTorch, setTorchHandler }}
+        >
           <Navigation colorScheme={colorScheme} />
         </Context.Provider>
         <StatusBar />
