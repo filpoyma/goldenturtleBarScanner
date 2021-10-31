@@ -49,10 +49,10 @@ export default function BarCodeScanScreen({ route, navigation }) {
     if (!scanned) {
       const { type, data } = scannedResult; // data === 'string'
       setScanned(true);
-      setDataHandler((state) => [
-        { timeStamp: new Date(), passed: true, info: data },
-        ...state,
-      ]);
+      // setDataHandler((state) => [
+      //   { timeStamp: new Date(), passed: true, info: data },
+      //   ...state,
+      // ]);
 
       ticketType = TICKETS.used;
       ticketData.date = new Date();
