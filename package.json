@@ -24,10 +24,10 @@
     "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
     "react-native-barcode-mask": "^1.2.4",
     "react-native-gesture-handler": "^1.10.3",
-    "react-native-mmkv-storage": "^0.6.6",
     "react-native-progress": "^5.0.0",
     "react-native-safe-area-context": "3.2.0",
-    "react-native-vector-icons": "^8.1.0"
+    "react-native-vector-icons": "^8.1.0",
+    "@react-native-async-storage/async-storage": "~1.15.0"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0"

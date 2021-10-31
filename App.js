@@ -1,13 +1,12 @@
 import React from "react";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import useCachedResources from "./hooks/useCachedResources";
 import useColorScheme from "./hooks/useColorScheme";
 import Navigation from "./navigation";
 import Context from "./context";
-import MMKVStorage from "react-native-mmkv-storage";
-const MMKV = new MMKVStorage.Loader().initialize(); // Returns an MMKV Instance
 
 /**
  * @return {null}
@@ -41,8 +40,8 @@ export default function App() {
   const isLoadingComplete = useCachedResources(setLocalDataHandler);
   const colorScheme = useColorScheme();
   (async () => {
-    let myArray = await MMKV.getArrayAsync("data");
-    console.log('file-myArray :', myArray);
+    const value = await AsyncStorage.getItem('data') || [];
+    console.log('file-await await AsyncStorage.getItem(data) :', value);
   })();
   // console.log("data", localData);
   if (!isLoadingComplete) {
