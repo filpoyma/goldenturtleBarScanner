@@ -53,7 +53,10 @@ const styles = StyleSheet.create({
     width: sizes.window.finderWidth,
     // height:80,
     backgroundColor: backgroundColor,
-    zIndex: 10
+    zIndex: 10,
+    borderColor: '#ff9792',
+    borderWidth: 1
+
   }),
   textLeft: {
     alignItems: 'flex-start',

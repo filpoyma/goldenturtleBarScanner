@@ -25,6 +25,7 @@ export default function App() {
   //     "used": "0"}], err: }
   const [localData, setLocalData] = React.useState({
     data: [],
+    ticket: {},
     err: null,
     isSync: false,
     online: false,
@@ -39,11 +40,6 @@ export default function App() {
 
   const isLoadingComplete = useCachedResources(setLocalDataHandler);
   const colorScheme = useColorScheme();
-  (async () => {
-    const value = await AsyncStorage.getItem('data') || [];
-    console.log('file-await await AsyncStorage.getItem(data) :', value);
-  })();
-  // console.log("data", localData);
   if (!isLoadingComplete) {
     return null;
   } else {

@@ -38,9 +38,10 @@ const styles = StyleSheet.create({
 flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
     backgroundColor: 'transparent',
     zIndex: 1,
+    borderColor: '#ff9792',
+    borderWidth: 1
   },
   input: {
     height: 55,

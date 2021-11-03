@@ -7,7 +7,6 @@ import { BarCodeScanner } from "expo-barcode-scanner";
 import BarcodeMask from "react-native-barcode-mask";
 import { Camera } from "expo-camera";
 
-
 import Context from "../context";
 import ProgressBar from "../components/ProgressBar";
 import ScannedResult from "../components/ScannedResult";
@@ -15,25 +14,21 @@ import sizes from "../constants/Layout";
 // import { Colors } from "../constants/Colors";
 import TICKETS from "../constants/tiketsNames";
 import SearchPanel from "../components/SearchPanel";
+import { getTicketById } from "../units/asyncFuncs";
+import { getTicketType, ticketDataConverter } from "../units/convertFuncs";
 
 const type = Camera.Constants.Type.back;
 const torchOff = Camera.Constants.FlashMode.off;
 const torchOn = Camera.Constants.FlashMode.torch;
 
-let ticketType = TICKETS.greetings;
-const ticketData = {
-  name: "СЕМЕН СЕМЕНЫЧ",
-  phone: "+73222233333",
-  number: "№123123",
-  date: new Date(),
-  email: "goldenturtle@oml.ru",
-};
-
 export default function BarCodeScanScreen({ route, navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
-
-  const { setDataHandler, isTorch } = React.useContext(Context);
+  const [ticket, setTicket] = React.useState({
+    type: TICKETS.greetings,
+    data: {},
+  });
+  const { localData, setLocalDataHandler, isTorch } = React.useContext(Context);
   const isFocused = useIsFocused();
 
   // console.log('file-route :', route);
@@ -45,23 +40,28 @@ export default function BarCodeScanScreen({ route, navigation }) {
     })();
   }, []);
 
-  const handleBarCodeScanned = (scannedResult) => {
+  const handleBarCodeScanned = async (scannedResult) => {
     if (!scanned) {
-      const { type, data } = scannedResult; // data === 'string'
+      const { type, data: id } = scannedResult; // data === 'string'
       setScanned(true);
-      // setDataHandler((state) => [
-      //   { timeStamp: new Date(), passed: true, info: data },
+      // setLocalDataHandler((state) => ({
       //   ...state,
-      // ]);
+      //
+      // }));
+      try {
+        const ticket = await getTicketById(id);
+        if (!ticket.err && ticket.data) {
+          setTicket({
+            type: getTicketType(ticket.data.type),
+            data: ticketDataConverter(ticket.data),
+          });
+        }
+      } catch (e) {}
 
-      ticketType = TICKETS.used;
-      ticketData.date = new Date();
-      ticketData.number = data;
-
-      Alert.alert(
-        "Bar code has been scanned!",
-        `Data: ${data}`
-      );
+      // Alert.alert(
+      //   "Bar code has been scanned!",
+      //   `Data: ${data}`
+      // );
     }
   };
 
@@ -79,13 +79,11 @@ export default function BarCodeScanScreen({ route, navigation }) {
         total={1325}
         visited={900}
       />
-      <ScannedResult ticketType={ticketType} ticketData={ticketData} />
+      <ScannedResult ticketType={ticket.type} ticketData={ticket.data} />
 
       <View style={{ height: sizes.window.finderWidth }}>
-        {(route.name === "SearchScreen") && (
-          <SearchPanel />
-        )}
-        {(route.name === "BarCodeScanScreen") && isFocused && (
+        {route.name === "SearchScreen" && <SearchPanel />}
+        {route.name === "BarCodeScanScreen" && isFocused && (
           <Camera
             onBarCodeScanned={!scanned ? handleBarCodeScanned : undefined}
             type={type}

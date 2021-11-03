@@ -25,8 +25,8 @@ const styles = StyleSheet.create({
   progressBar: {
     alignItems: 'center',
     marginVertical: 10,
-    // borderColor: 'black',
-    // borderWidth: 1
+    borderColor: '#ff9792',
+    borderWidth: 1
   },
   progressBarText: {
     width: sizes.window.finderWidth - 9,

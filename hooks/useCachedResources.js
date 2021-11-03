@@ -32,6 +32,7 @@ export default function useCachedResources(setLocalDataHandler) {
         // console.log('res. error', res.error);
         if (!res.err && Array.isArray(res.data)) {
           console.log("\x1b[36m%s\x1b[0m", "ONLINE DATA");
+          await AsyncStorage.setItem("data", JSON.stringify(res.data));
           setLocalDataHandler({
             data: res.data,
             err: null,
@@ -39,7 +40,6 @@ export default function useCachedResources(setLocalDataHandler) {
             online: true,
           });
 
-          await AsyncStorage.setItem("data", JSON.stringify(res.data));
         } else {
           console.log("\x1b[36m%s\x1b[0m", "OFFLINE DATA");
           //  если сервер недоступен используем данные из локал стора
