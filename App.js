@@ -1,7 +1,7 @@
 import React from "react";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import useCachedResources from "./hooks/useCachedResources";
 import useColorScheme from "./hooks/useColorScheme";
@@ -24,8 +24,6 @@ export default function App() {
   //     "type": "полный",
   //     "used": "0"}], err: }
   const [localData, setLocalData] = React.useState({
-    data: [],
-    ticket: {},
     err: null,
     isSync: false,
     online: false,

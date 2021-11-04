@@ -14,8 +14,9 @@ import sizes from "../constants/Layout";
 // import { Colors } from "../constants/Colors";
 import TICKETS from "../constants/tiketsNames";
 import SearchPanel from "../components/SearchPanel";
-import { getTicketById } from "../units/asyncFuncs";
+import { addUnSyncTicketToStor, getTicketById, updateTicketById} from "../units/asyncFuncs";
 import { getTicketType, ticketDataConverter } from "../units/convertFuncs";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const type = Camera.Constants.Type.back;
 const torchOff = Camera.Constants.FlashMode.off;
@@ -31,8 +32,6 @@ export default function BarCodeScanScreen({ route, navigation }) {
   const { localData, setLocalDataHandler, isTorch } = React.useContext(Context);
   const isFocused = useIsFocused();
 
-  // console.log('file-route :', route);
-
   useEffect(() => {
     (async () => {
       const { status } = await Camera.requestPermissionsAsync();
@@ -44,25 +43,51 @@ export default function BarCodeScanScreen({ route, navigation }) {
     if (!scanned) {
       const { type, data: id } = scannedResult; // data === 'string'
       setScanned(true);
-      // setLocalDataHandler((state) => ({
-      //   ...state,
-      //
-      // }));
       try {
-        const ticket = await getTicketById(id);
-        if (!ticket.err && ticket.data) {
+        let ticket = await getTicketById(id);
+
+        // console.log("file-ticket :", ticket);
+        if (!ticket.err) {
+          if (ticket.data) {
+            ticket = ticketDataConverter(ticket);
+            ticket.data.used = '1';
+            const stat = await updateTicketById(id, ticket);
+            if (!stat.err && stat.data?.status === "ok") {
+              setLocalDataHandler({
+                err: null,
+                isSync: true,
+                online: true,
+              });
+            } else { //  билет не удалось записать в БД
+              await addUnSyncTicketToStor(ticket);
+
+              setLocalDataHandler({
+                err: stat.err,
+                isSync: false,
+                online: false,
+              });
+            }
+          }
+          const ticketType = getTicketType(ticket);
+          const ticketData = ticket.data;
+
           setTicket({
-            type: getTicketType(ticket.data.type),
-            data: ticketDataConverter(ticket.data),
+            type: ticketType,
+            data: ticketData,
           });
+        } else {
+          console.log("Error:", ticket.err);
         }
-      } catch (e) {}
+      } catch (e) {
+        console.log("Exeption Error:", e);
+      }
 
       // Alert.alert(
       //   "Bar code has been scanned!",
       //   `Data: ${data}`
       // );
     }
+    console.log('("unsynctickets")', (await AsyncStorage.getItem("unsynctickets")));
   };
 
   if (hasPermission === null) {

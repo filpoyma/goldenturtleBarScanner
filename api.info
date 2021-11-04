@@ -1,0 +1,16 @@
+/qrapp?id=all&key=... - получить все
+/qrapp?id=2&key=... - получить билет по id
+/qrapp?search&&key=...data=цкуцку
+
+POST:
+/qrapp -  обновить поле в билете
+в теле запроса :
+{
+  id: 2
+  used: 1
+  key: 123123
+}
+в ответ отправть  {  status: "ok" } -  если все ок и записалось в базу
+ или {  status: "fail" } -  если не сохранилось или что то пошло не так
+
+Ключик:  key = LulmDZjBr1EwMxHuJ2iFlyo1742sqRcJ

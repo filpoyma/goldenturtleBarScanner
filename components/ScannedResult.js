@@ -26,7 +26,7 @@ const ScannedResult = ({ticketType, ticketData}) => {
   return <View style={styles.container(ticketType.color)}>
     <View style={styles.textLeft}>
       <Text>{ticketType.name}</Text>
-      <Text>{ticketData.number.slice(0, 19)}</Text>
+      <Text>№{ticketData.id.slice(0, 19)}</Text>
       <Text>{dayjs(ticketData.date).format('DD-MM-YYYY hh:mm')}</Text>
     </View>
     <View style={styles.image}>

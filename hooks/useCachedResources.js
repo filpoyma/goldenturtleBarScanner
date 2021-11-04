@@ -32,33 +32,36 @@ export default function useCachedResources(setLocalDataHandler) {
         // console.log('res. error', res.error);
         if (!res.err && Array.isArray(res.data)) {
           console.log("\x1b[36m%s\x1b[0m", "ONLINE DATA");
-          await AsyncStorage.setItem("data", JSON.stringify(res.data));
+          await AsyncStorage.setItem("tickets", JSON.stringify(res.data));
           setLocalDataHandler({
-            data: res.data,
             err: null,
             isSync: true,
             online: true,
           });
-
         } else {
           console.log("\x1b[36m%s\x1b[0m", "OFFLINE DATA");
           //  если сервер недоступен используем данные из локал стора
-          const data = await AsyncStorage.getItem("data");
-          if (data && Array.isArray(data)) {
+          const tickets = await AsyncStorage.getItem("tickets");
+          if (tickets && Array.isArray(tickets)) {
             setLocalDataHandler({
-              data: data,
               err: null,
               isSync: false,
               online: false,
             });
           } else {
+            //данных нет. повторить попытку загрузки!
             console.log("\x1b[31m", "NO DATA");
             console.warn("Error", res.err);
-            setLocalDataHandler({ err: (res.err || "no data") });
+            setLocalDataHandler({
+              err: res.err || "no data",
+              isSync: false,
+              online: false,
+            });
           }
         }
       } catch (e) {
         console.warn("Err", e.message);
+        setLocalDataHandler({ err: e.message });
       } finally {
         setLoadingComplete(true);
         SplashScreen.hideAsync();

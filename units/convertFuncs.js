@@ -1,20 +1,33 @@
-import TICKETS, {TICKETTYPE} from "../constants/tiketsNames";
+import TICKETS, { TICKETTYPE } from "../constants/tiketsNames";
 
-export const ticketDataConverter = (data) => {
-  console.log('file-data :', data);
-    return {number: data.id,
-    name: data.name,
-    phone: data.phone,
-    date: data.date,
-    email: data.email,
-    howmuch: data.howmuch,
-    used: data.used}
+const filterInt = function (value) {
+  if (/^(\-|\+)?([0-9]+|Infinity)$/.test(value)) return Number(value);
+  return NaN;
 };
 
-export const getTicketType = (type) => {
-  switch (type) {
+export const ticketDataConverter = (ticket) => {
+  return {
+    data: {
+      id: ticket.data.id,
+      type: ticket.data.type,
+      name: ticket.data.name,
+      phone: ticket.data.phone,
+      date: ticket.data.date,
+      email: ticket.data.email,
+      used: ticket.data.used,
+    },
+  };
+};
+
+export const getTicketType = (ticket) => {
+  if (!ticket.data)
+    return TICKETS.notFound;
+  if ((ticket.data.used === '0') || ticket.data.used === 0)
+    return TICKETS.used;
+
+  switch (ticket.data.type) {
     case TICKETTYPE.full:
-       return TICKETS.full;
+      return TICKETS.full;
     case TICKETTYPE.privileged:
       return TICKETS.privileged;
     case TICKETTYPE.free:
@@ -22,4 +35,4 @@ export const getTicketType = (type) => {
     default:
       return TICKETS.nameNotFound;
   }
-}
+};
