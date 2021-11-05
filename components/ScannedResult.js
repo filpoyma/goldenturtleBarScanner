@@ -5,7 +5,7 @@ import sizes from "../constants/Layout";
 import TICKETS from "../constants/tiketsNames";
 import dayjs from "dayjs";
 
-const ScannedResult = ({ticketType, ticketData}) => {
+const ScannedResult = ({ticketType = {}, ticketData = {}}) => {
 
   if ((ticketType.name === TICKETS.notFound.name) || (ticketType.name === TICKETS.greetings.name))
     return <View style={styles.container(ticketType.color)}>
@@ -26,7 +26,7 @@ const ScannedResult = ({ticketType, ticketData}) => {
   return <View style={styles.container(ticketType.color)}>
     <View style={styles.textLeft}>
       <Text>{ticketType.name}</Text>
-      <Text>№{ticketData.id.slice(0, 19)}</Text>
+      <Text>№{ticketData.id?.slice(0, 19)}</Text>
       <Text>{dayjs(ticketData.date).format('DD-MM-YYYY hh:mm')}</Text>
     </View>
     <View style={styles.image}>

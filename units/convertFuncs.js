@@ -20,9 +20,9 @@ export const ticketDataConverter = (ticket) => {
 };
 
 export const getTicketType = (ticket) => {
-  if (!ticket.data)
+  if (!ticket || !ticket.data)
     return TICKETS.notFound;
-  if ((ticket.data.used === '0') || ticket.data.used === 0)
+  if ((ticket.data.used === '1') || ticket.data.used === 1)
     return TICKETS.used;
 
   switch (ticket.data.type) {

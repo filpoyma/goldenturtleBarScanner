@@ -27,6 +27,8 @@ export default function useCachedResources(setLocalDataHandler) {
         });
 
         // fetch data
+        // await AsyncStorage.removeItem("tickets");
+        // await AsyncStorage.removeItem("unsynctickets");
         const res = await getAllTickets();
         // console.log('res.data', res.data);
         // console.log('res. error', res.error);
@@ -35,27 +37,26 @@ export default function useCachedResources(setLocalDataHandler) {
           await AsyncStorage.setItem("tickets", JSON.stringify(res.data));
           setLocalDataHandler({
             err: null,
-            isSync: true,
-            online: true,
+            isOnline: true,
           });
         } else {
           console.log("\x1b[36m%s\x1b[0m", "OFFLINE DATA");
           //  если сервер недоступен используем данные из локал стора
           const tickets = await AsyncStorage.getItem("tickets");
-          if (tickets && Array.isArray(tickets)) {
+          console.log('localtickets:', tickets);
+          if (tickets && Array.isArray(JSON.parse(tickets))) {
+            console.log("LOCAL DATA length", JSON.parse(tickets).length);
             setLocalDataHandler({
-              err: null,
-              isSync: false,
-              online: false,
+              err: res.err,
+              isOnline: false,
             });
           } else {
-            //данных нет. повторить попытку загрузки!
+            //данных ни локально, ни с сервера нет. повторить попытку загрузки!
             console.log("\x1b[31m", "NO DATA");
             console.warn("Error", res.err);
             setLocalDataHandler({
-              err: res.err || "no data",
-              isSync: false,
-              online: false,
+              err: "no data",
+              isOnline: false,
             });
           }
         }
@@ -68,9 +69,6 @@ export default function useCachedResources(setLocalDataHandler) {
       }
     }
     loadResourcesAndDataAsync();
-    return () => {
-      console.log("UNMOUNT");
-    };
   }, []);
 
   return isLoadingComplete;

@@ -25,8 +25,7 @@ export default function App() {
   //     "used": "0"}], err: }
   const [localData, setLocalData] = React.useState({
     err: null,
-    isSync: false,
-    online: false,
+    isOnline: false,
   });
   const [isTorch, setTorch] = React.useState(false);
   const setLocalDataHandler = (data) => {
@@ -35,6 +34,8 @@ export default function App() {
   const setTorchHandler = () => {
     setTorch((state) => !state);
   };
+
+  console.log('App localData:', localData);
 
   const isLoadingComplete = useCachedResources(setLocalDataHandler);
   const colorScheme = useColorScheme();

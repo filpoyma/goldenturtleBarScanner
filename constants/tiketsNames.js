@@ -16,4 +16,5 @@ export default TICKETS;
     full: 'полный',
     privileged: 'льготный',
     free: 'бесплатный',
+    used: 'использован'
  };

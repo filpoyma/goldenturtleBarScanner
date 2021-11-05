@@ -6,6 +6,7 @@ import { Text, View } from "../components/Themed";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import BarcodeMask from "react-native-barcode-mask";
 import { Camera } from "expo-camera";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import Context from "../context";
 import ProgressBar from "../components/ProgressBar";
@@ -14,10 +15,12 @@ import sizes from "../constants/Layout";
 // import { Colors } from "../constants/Colors";
 import TICKETS from "../constants/tiketsNames";
 import SearchPanel from "../components/SearchPanel";
-import { getTicketById, updateTicketById} from "../units/asyncFuncs";
-import { addUnSyncTicketToStor } from "../units/localStorFuncs";
+import {
+  getTicket,
+  setTicketUsedById,
+} from "../units/asyncFuncs";
+import { addUnSyncTicketToStor, findByIdInStor } from "../units/localStorFuncs";
 import { getTicketType, ticketDataConverter } from "../units/convertFuncs";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const type = Camera.Constants.Type.back;
 const torchOff = Camera.Constants.FlashMode.off;
@@ -41,44 +44,61 @@ export default function BarCodeScanScreen({ route, navigation }) {
   }, []);
 
   const handleBarCodeScanned = async (scannedResult) => {
+    let ticket = {};
     if (!scanned) {
       const { type, data: id } = scannedResult; // data === 'string'
       setScanned(true);
       try {
-        let ticket = await getTicketById(id);
+        ticket = await getTicket(id);
+        if (!ticket.err && ticket.data) { //  билет найден
+          console.log('BarCodeScanScreen билет найден:');
 
-        // console.log("file-ticket :", ticket);
-        if (!ticket.err) {
-          if (ticket.data) {
-            ticket = ticketDataConverter(ticket);
-            ticket.data.used = '1';
-            const stat = await updateTicketById(id, ticket);
-            if (!stat.err && stat.data?.status === "ok") {
-              setLocalDataHandler({
-                err: null,
-                isSync: true,
-                online: true,
-              });
-            } else { //  билет не удалось записать в БД
-              await addUnSyncTicketToStor(ticket);
-
-              setLocalDataHandler({
-                err: stat.err,
-                isSync: false,
-                online: false,
-              });
-            }
-          }
-          const ticketType = getTicketType(ticket);
-          const ticketData = ticket.data;
+          ticket = ticketDataConverter(ticket);
 
           setTicket({
-            type: ticketType,
-            data: ticketData,
+            type: getTicketType(ticket),
+            data: ticket.data,
           });
-        } else {
-          console.log("Error:", ticket.err);
+          setLocalDataHandler({
+            err: null,
+            isOnline: ticket.isOnline,
+          });
+          if (ticket.data.used === "1" || ticket.data.used === 1) console.log('билет уже использован');
+          if (ticket.data.used === "1" || ticket.data.used === 1) return; // билет уже использован
+
+          const stat = await setTicketUsedById(id);
+          if (!stat.err && stat.data?.status === "ok") {
+            // билет "погашен" в удаленной базе
+            console.log('билет "погашен" в удаленной базе')
+            setLocalDataHandler({
+              err: null,
+              isOnline: true,
+            });
+          } else {
+            //  'билет не удалось записать в удаленную БД'
+            console.log('билет не удалось записать в удаленную БД... записываем билет в локалСтор')
+            ticket.data.used = "1";
+            await addUnSyncTicketToStor(ticket); // записываем билет в локалСтор несинхронизированных билетов
+
+            setLocalDataHandler({
+              err: stat.err,
+              isOnline: false,
+            });
+          }
         }
+        if(ticket.err) {
+          setTicket({
+            type: getTicketType(),
+            data: {},
+          });
+          setLocalDataHandler({
+            err: ticket.err === "not found" ? null : ticket.err,
+            isOnline: ticket.isOnline,
+          });
+          ticket.err === "not found" ? Alert.alert('билет не найден') : Alert.alert('билет не найден из за ошибке на сервере')
+
+        }
+
       } catch (e) {
         console.log("Exeption Error:", e);
       }
@@ -88,7 +108,10 @@ export default function BarCodeScanScreen({ route, navigation }) {
       //   `Data: ${data}`
       // );
     }
-    console.log('("unsynctickets")', (await AsyncStorage.getItem("unsynctickets")));
+    // console.log(
+    //   '("unsynctickets")',
+    //   await AsyncStorage.getItem("unsynctickets")
+    // );
   };
 
   if (hasPermission === null) {

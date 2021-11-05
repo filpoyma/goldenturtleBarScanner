@@ -42,5 +42,7 @@ export const updateTicketToStor = async (ticket) => {
 
 export const findByIdInStor = async (id) => {
   const tickets = await getTicketsArrFromStor();
-  return tickets.filter((el) => el.id === id);
+  const ticket = tickets.filter((el) => el.id === id);
+  if (ticket.length === 0) return null;
+  return {data: ticket[0]};
 };
