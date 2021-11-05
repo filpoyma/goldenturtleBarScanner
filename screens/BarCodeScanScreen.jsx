@@ -14,7 +14,8 @@ import sizes from "../constants/Layout";
 // import { Colors } from "../constants/Colors";
 import TICKETS from "../constants/tiketsNames";
 import SearchPanel from "../components/SearchPanel";
-import { addUnSyncTicketToStor, getTicketById, updateTicketById} from "../units/asyncFuncs";
+import { getTicketById, updateTicketById} from "../units/asyncFuncs";
+import { addUnSyncTicketToStor } from "../units/localStorFuncs";
 import { getTicketType, ticketDataConverter } from "../units/convertFuncs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 

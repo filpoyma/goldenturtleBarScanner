@@ -32,14 +32,3 @@ export const updateTicketById = async (id, ticket) => {
   else return { data: undefined, err: res.status };
 };
 
-export const addUnSyncTicketToStor = async (ticket) => {
-  let tickets = await AsyncStorage.getItem("unsynctickets");
-  if (!tickets || isObjEmpty(JSON.parse(tickets))) tickets = "[]";
-  tickets = JSON.parse(tickets);
-  const isExist = tickets.some((el) => el.id === ticket.data.id);
-  if (!isExist) {
-    tickets.push(ticket.data);
-    await AsyncStorage.setItem("unsynctickets", JSON.stringify(tickets));
-  }
-  // await AsyncStorage.removeItem('unsynctickets')
-};
