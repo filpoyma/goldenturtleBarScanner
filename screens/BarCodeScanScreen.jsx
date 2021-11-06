@@ -15,11 +15,12 @@ import sizes from "../constants/Layout";
 // import { Colors } from "../constants/Colors";
 import TICKETS from "../constants/tiketsNames";
 import SearchPanel from "../components/SearchPanel";
+import { getTicket, syncTickets, updateTicket } from "../units/asyncFuncs";
 import {
-  getTicket,
-  setTicketUsedById,
-} from "../units/asyncFuncs";
-import { addUnSyncTicketToStor, findByIdInStor } from "../units/localStorFuncs";
+  addUnSyncTicketToStor,
+  findByIdInStor,
+  updateTicketToStor,
+} from "../units/localStorFuncs";
 import { getTicketType, ticketDataConverter } from "../units/convertFuncs";
 
 const type = Camera.Constants.Type.back;
@@ -50,8 +51,9 @@ export default function BarCodeScanScreen({ route, navigation }) {
       setScanned(true);
       try {
         ticket = await getTicket(id);
-        if (!ticket.err && ticket.data) { //  билет найден
-          console.log('BarCodeScanScreen билет найден:');
+        if (!ticket.err && ticket.data) {
+          //  билет найден
+          console.log("BarCodeScanScreen билет найден:");
 
           ticket = ticketDataConverter(ticket);
 
@@ -63,20 +65,25 @@ export default function BarCodeScanScreen({ route, navigation }) {
             err: null,
             isOnline: ticket.isOnline,
           });
-          if (ticket.data.used === "1" || ticket.data.used === 1) console.log('билет уже использован');
+          if (ticket.data.used === "1" || ticket.data.used === 1)
+            console.log("билет уже использован");
           if (ticket.data.used === "1" || ticket.data.used === 1) return; // билет уже использован
 
-          const stat = await setTicketUsedById(id);
+          ticket.data.used = "1";
+          const stat = await updateTicket(ticket); //  запись использованного билета в удаленную бд
+          await updateTicketToStor(ticket); //  запись использованного билета в локальную бд
           if (!stat.err && stat.data?.status === "ok") {
             // билет "погашен" в удаленной базе
-            console.log('билет "погашен" в удаленной базе')
+            console.log('билет "погашен" в удаленной базе');
             setLocalDataHandler({
               err: null,
               isOnline: true,
             });
           } else {
             //  'билет не удалось записать в удаленную БД'
-            console.log('билет не удалось записать в удаленную БД... записываем билет в локалСтор')
+            console.log(
+              "билет не удалось записать в удаленную БД... записываем билет в локалСтор"
+            );
             ticket.data.used = "1";
             await addUnSyncTicketToStor(ticket); // записываем билет в локалСтор несинхронизированных билетов
 
@@ -86,7 +93,7 @@ export default function BarCodeScanScreen({ route, navigation }) {
             });
           }
         }
-        if(ticket.err) {
+        if (ticket.err) {
           setTicket({
             type: getTicketType(),
             data: {},
@@ -95,10 +102,11 @@ export default function BarCodeScanScreen({ route, navigation }) {
             err: ticket.err === "not found" ? null : ticket.err,
             isOnline: ticket.isOnline,
           });
-          ticket.err === "not found" ? Alert.alert('билет не найден') : Alert.alert('билет не найден из за ошибке на сервере')
-
+          ticket.err === "not found"
+            ? Alert.alert("билет не найден")
+            : Alert.alert("билет не найден из за ошибке на сервере");
         }
-
+        await syncTickets();
       } catch (e) {
         console.log("Exeption Error:", e);
       }
@@ -108,10 +116,7 @@ export default function BarCodeScanScreen({ route, navigation }) {
       //   `Data: ${data}`
       // );
     }
-    // console.log(
-    //   '("unsynctickets")',
-    //   await AsyncStorage.getItem("unsynctickets")
-    // );
+    console.log("unsynctickets", await AsyncStorage.getItem("unsynctickets"));
   };
 
   if (hasPermission === null) {

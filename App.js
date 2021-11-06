@@ -35,7 +35,7 @@ export default function App() {
     setTorch((state) => !state);
   };
 
-  console.log('App localData:', localData);
+  // console.log('App localData:', localData);
 
   const isLoadingComplete = useCachedResources(setLocalDataHandler);
   const colorScheme = useColorScheme();

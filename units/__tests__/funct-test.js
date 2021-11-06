@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import {getAllTickets, getTicketById} from "../asyncFuncs";
+import {syncTickets} from "../localStorFuncs";
 // import renderer from 'react-test-renderer';
 //
 // import { MonoText } from '../StyledText';
@@ -15,8 +16,12 @@ import {getAllTickets, getTicketById} from "../asyncFuncs";
 //   expect(await getTicketById(200)).toBe({});
 // });
 
-it('getAllTickets', async () => {
-  expect(await getAllTickets(200)).toBe({});
+// it('getAllTickets', async () => {
+//   expect(await getAllTickets(200)).toBe({});
+//
+// });
 
+it('getAllTickets', async () => {
+  expect(await syncTickets()).toBe({});
 });
 

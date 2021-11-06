@@ -12,9 +12,16 @@ const TICKETS = {
 
 export default TICKETS;
 
- export const TICKETTYPE = {
+export const TICKETTYPE = {
     full: 'полный',
     privileged: 'льготный',
     free: 'бесплатный',
     used: 'использован'
- };
+};
+
+export const localDb = {
+  tickets: 'tickets',
+  unsyncTickets: 'unsynctickets'
+}
+
+

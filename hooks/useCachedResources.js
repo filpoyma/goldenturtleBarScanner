@@ -4,6 +4,7 @@ import * as SplashScreen from "expo-splash-screen";
 import React from "react";
 import { getAllTickets } from "../units/asyncFuncs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {localDb} from "../constants/tiketsNames";
 
 export default function useCachedResources(setLocalDataHandler) {
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
@@ -34,7 +35,7 @@ export default function useCachedResources(setLocalDataHandler) {
         // console.log('res. error', res.error);
         if (!res.err && Array.isArray(res.data)) {
           console.log("\x1b[36m%s\x1b[0m", "ONLINE DATA");
-          await AsyncStorage.setItem("tickets", JSON.stringify(res.data));
+          await AsyncStorage.setItem(localDb.tickets, JSON.stringify(res.data));
           setLocalDataHandler({
             err: null,
             isOnline: true,
@@ -42,8 +43,8 @@ export default function useCachedResources(setLocalDataHandler) {
         } else {
           console.log("\x1b[36m%s\x1b[0m", "OFFLINE DATA");
           //  если сервер недоступен используем данные из локал стора
-          const tickets = await AsyncStorage.getItem("tickets");
-          console.log('localtickets:', tickets);
+          const tickets = await AsyncStorage.getItem(localDb.tickets);
+          // console.log('localtickets:', tickets);
           if (tickets && Array.isArray(JSON.parse(tickets))) {
             console.log("LOCAL DATA length", JSON.parse(tickets).length);
             setLocalDataHandler({

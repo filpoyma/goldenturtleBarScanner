@@ -1,7 +1,10 @@
 import { BASEURL } from "../constants/urls";
 import {isObjEmpty} from "./checkFincs";
 import fetch from 'cross-fetch';
-import {findByIdInStor} from "./localStorFuncs";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+import {findByIdInStor, getTicketsArrFromStor} from "./localStorFuncs";
+import {localDb} from "../constants/tiketsNames";
 
 export const getAllTickets = async () => {
   const res = await fetch(`${BASEURL}/qrapp?id=all`);
@@ -20,16 +23,16 @@ export const getTicketById = async (id) => {
   else return { err: res.status, data: null };
 };
 
-export const setTicketUsedById = async (id) => {
-  const res = await fetch(`${BASEURL}/qrapp`, {
+export const updateTicket = async (ticket) => {
+  const res = await fetch(`${BASEURL}/qrappZZZ`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       // 'Content-Type': 'application/x-www-form-urlencoded',
     },
     body: JSON.stringify({
-      id: id,
-      used: "1",
+      id: ticket.data.id,
+      used: ticket.data.used,
       key: "LulmDZjBr1EwMxHuJ2iFlyo1742sqRcJ",
     }),
   });
@@ -49,4 +52,16 @@ export const getTicket = async (id) => {
   return { err: "not found", data: null, isOnline: true };
 };
 
+export const syncTickets = async () => {
+  const unsyncTickets = await getTicketsArrFromStor(localDb.unsyncTickets);
+  if(Array.isArray(unsyncTickets) && unsyncTickets.length !== 0) {
+    const promices = unsyncTickets.map((ticket) => {
+      return updateTicket({data: ticket})
+    });
+    const data = await Promise.all(promices);
+    const isSyncError = data.some((el) => el.err);
+    if(!isSyncError) await AsyncStorage.removeItem(localDb.unsyncTickets);
+    return !isSyncError;
+  }
+}
 
