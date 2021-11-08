@@ -7,7 +7,7 @@ import {findByIdInStor, getTicketsArrFromStor} from "./localStorFuncs";
 import {localDb} from "../constants/tiketsNames";
 
 export const getAllTickets = async () => {
-  const res = await fetch(`${BASEURL}/qrapp?id=all`);
+  const res = await fetch(`${BASEURL}/qrappZZZ?id=all`);
   console.log("file-res.status :", res.status);
   if (res.status === 200) return { data: await res.json(), err: null };
   else return { err: res.status, data: null };
@@ -63,5 +63,5 @@ export const syncTickets = async () => {
     if(!isSyncError) await AsyncStorage.removeItem(localDb.unsyncTickets);
     return !isSyncError;
   }
-}
+};
 

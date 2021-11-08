@@ -23,21 +23,17 @@ export default function App() {
   //     "phone": "8-111-111-11-11",
   //     "type": "полный",
   //     "used": "0"}], err: }
-  const [localData, setLocalData] = React.useState({
-    err: null,
-    isOnline: false,
-  });
+  const [status, setStatus] = React.useState({err: null, isOnline: false});
+  const [tickets, setTickets] = React.useState([]);
   const [isTorch, setTorch] = React.useState(false);
-  const setLocalDataHandler = (data) => {
-    setLocalData(data);
-  };
-  const setTorchHandler = () => {
-    setTorch((state) => !state);
-  };
 
-  // console.log('App localData:', localData);
+  const setStatusHandler = (data) => {setStatus(data);};
+  const setTorchHandler = () => {setTorch((state) => !state)};
+  const setTicketsHandler = (tickets) => {setTickets(tickets);};
 
-  const isLoadingComplete = useCachedResources(setLocalDataHandler);
+  // console.log('App status:', status);
+
+  const isLoadingComplete = useCachedResources(setStatusHandler, setTicketsHandler);
   const colorScheme = useColorScheme();
   if (!isLoadingComplete) {
     return null;
@@ -45,7 +41,7 @@ export default function App() {
     return (
       <SafeAreaProvider>
         <Context.Provider
-          value={{ localData, setLocalDataHandler, isTorch, setTorchHandler }}
+          value={{ status, setStatusHandler, isTorch, setTorchHandler, tickets, setTickets }}
         >
           <Navigation colorScheme={colorScheme} />
         </Context.Provider>
@@ -54,3 +50,8 @@ export default function App() {
     );
   }
 }
+
+ // todo подсчет билетов и сколько прошло - DONE
+// todo поиск билетов
+// todo  верстка, шрифты
+// todo unsynced stor - нужно синхронизировать -  DONE

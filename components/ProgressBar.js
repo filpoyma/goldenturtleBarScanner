@@ -5,10 +5,10 @@ import {Text, View} from "./Themed";
 import {StyleSheet} from "react-native";
 import sizes from "../constants/Layout";
 
-const ProgressBar = ({width, height, total, visited}) => (
+const ProgressBar = ({width, height, total = 0, visited}) => (
   <View style={styles.progressBar}>
     <Progress.Bar width={width} height={height} color={Colors.accept} unfilledColor={Colors.primary}
-                  borderWidth={0} borderRadius={7} progress={visited/total}
+                  borderWidth={0} borderRadius={7} progress={ !total ? 0 : visited/total}
     />
     <View style={styles.progressBarText}>
       <View><Text>ПОСЕТИЛИ</Text></View>

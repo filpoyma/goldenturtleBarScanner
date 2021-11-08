@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { isObjEmpty } from "./checkFincs";
-import { localDb } from "../constants/tiketsNames";
+import {localDb} from "../constants/tiketsNames";
 
 export const getTicketsArrFromStor = async (type) => {
   let tickets = await AsyncStorage.getItem(type);
@@ -8,36 +8,25 @@ export const getTicketsArrFromStor = async (type) => {
   return JSON.parse(tickets);
 };
 
-export const updateTicketToStor = (tickets, setTickets, ticket) => {
-  // const tickets = await getTicketsArrFromStor(localDb.tickets);
+export const updateTicketToStor = async (ticket) => {
+  const tickets = await getTicketsArrFromStor(localDb.tickets);
   const updatedTickets = tickets.map((el) => {
-    if (el.id === ticket.data.id) return {...el, used: ticket.data.used};
-    else return el;
+    if (el.id === ticket.data.id) {
+      return {
+        ...el,
+        used: ticket.data.used,
+      };
+    }
+    return el;
   });
-  AsyncStorage.setItem("tickets", JSON.stringify(updatedTickets)).then(() => {
-    console.log("билет %s обновлен в LocalStor", ticket.data.id);
-  });
-  setTickets(updatedTickets);
+  await AsyncStorage.setItem("tickets", JSON.stringify(updatedTickets));
 };
-
-// export const findByIdInStor = async (tickets, id) => {
-//   const ticket = tickets.filter((ticket) => ticket.data.id === id);
-//   if (ticket.length === 0) return null;
-//   return { data: ticket[0] };
-// };
 
 export const findByIdInStor = async (id) => {
   const tickets = await getTicketsArrFromStor(localDb.tickets);
   const ticket = tickets.filter((el) => el.id === id);
   if (ticket.length === 0) return null;
-  console.log('билет найден в asyncLocalStor id:', id);
   return {data: ticket[0]};
-};
-
-export const getVisited = (tickets = []) => {
-  return tickets.reduce((used, ticket) => {
-    return ticket.used === 1 || ticket.used === "1" ? used + 1 : used;
-  }, 0);
 };
 
 export const addUnSyncTicketToStor = async (ticket) => {
@@ -50,3 +39,14 @@ export const addUnSyncTicketToStor = async (ticket) => {
     await AsyncStorage.setItem(localDb.unsyncTickets, JSON.stringify(tickets));
   }
 };
+
+export const getProgress = async () => { // return visited/total tickets
+  const tickets = await getTicketsArrFromStor(localDb.tickets);
+  const visited = tickets.reduce((used, ticket) => {
+    return (ticket.used === 1 || ticket.used === '1') ? used + 1 : used;
+  }, 0);
+  const total = tickets.length;
+  const progress = (total === 0) ? total : visited/total;
+  return {visited, total, progress}
+};
+

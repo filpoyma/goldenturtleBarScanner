@@ -18,7 +18,7 @@ import SearchPanel from "../components/SearchPanel";
 import { getTicket, syncTickets, updateTicket } from "../units/asyncFuncs";
 import {
   addUnSyncTicketToStor,
-  findByIdInStor,
+  getVisited,
   updateTicketToStor,
 } from "../units/localStorFuncs";
 import { getTicketType, ticketDataConverter } from "../units/convertFuncs";
@@ -34,7 +34,7 @@ export default function BarCodeScanScreen({ route, navigation }) {
     type: TICKETS.greetings,
     data: {},
   });
-  const { localData, setLocalDataHandler, isTorch } = React.useContext(Context);
+  const { status, setStatusHandler, isTorch, tickets, setTickets } = React.useContext(Context);
   const isFocused = useIsFocused();
 
   useEffect(() => {
@@ -61,7 +61,7 @@ export default function BarCodeScanScreen({ route, navigation }) {
             type: getTicketType(ticket),
             data: ticket.data,
           });
-          setLocalDataHandler({
+          setStatusHandler({
             err: null,
             isOnline: ticket.isOnline,
           });
@@ -71,11 +71,13 @@ export default function BarCodeScanScreen({ route, navigation }) {
 
           ticket.data.used = "1";
           const stat = await updateTicket(ticket); //  запись использованного билета в удаленную бд
-          await updateTicketToStor(ticket); //  запись использованного билета в локальную бд
+          await updateTicketToStor(tickets, setTickets, ticket); //  запись использованного билета в локальную бд
+
+
           if (!stat.err && stat.data?.status === "ok") {
             // билет "погашен" в удаленной базе
             console.log('билет "погашен" в удаленной базе');
-            setLocalDataHandler({
+            setStatusHandler({
               err: null,
               isOnline: true,
             });
@@ -87,7 +89,7 @@ export default function BarCodeScanScreen({ route, navigation }) {
             ticket.data.used = "1";
             await addUnSyncTicketToStor(ticket); // записываем билет в локалСтор несинхронизированных билетов
 
-            setLocalDataHandler({
+            setStatusHandler({
               err: stat.err,
               isOnline: false,
             });
@@ -98,7 +100,7 @@ export default function BarCodeScanScreen({ route, navigation }) {
             type: getTicketType(),
             data: {},
           });
-          setLocalDataHandler({
+          setStatusHandler({
             err: ticket.err === "not found" ? null : ticket.err,
             isOnline: ticket.isOnline,
           });
@@ -106,7 +108,7 @@ export default function BarCodeScanScreen({ route, navigation }) {
             ? Alert.alert("билет не найден")
             : Alert.alert("билет не найден из за ошибке на сервере");
         }
-        await syncTickets();
+        await syncTickets(); //  синхронизация unsyncTickets  с удаленной БД
       } catch (e) {
         console.log("Exeption Error:", e);
       }
@@ -130,8 +132,8 @@ export default function BarCodeScanScreen({ route, navigation }) {
       <ProgressBar
         width={sizes.window.finderWidth}
         height={14}
-        total={1325}
-        visited={900}
+        total={tickets.length}
+        visited={getVisited(tickets)}
       />
       <ScannedResult ticketType={ticket.type} ticketData={ticket.data} />
 
