@@ -6,33 +6,46 @@ import {StyleSheet} from "react-native";
 import sizes from "../constants/Layout";
 
 const ProgressBar = ({width, height, total = 0, visited}) => (
-  <View style={styles.progressBar}>
+  <View style={styles.container}>
+    <View style={styles.progressBar}>
     <Progress.Bar width={width} height={height} color={Colors.accept} unfilledColor={Colors.primary}
                   borderWidth={0} borderRadius={7} progress={ !total ? 0 : visited/total}
     />
-    <View style={styles.progressBarText}>
-      <View><Text>ПОСЕТИЛИ</Text></View>
-      <View><Text>ОЖИДАЕТСЯ</Text></View>
     </View>
     <View style={styles.progressBarText}>
-      <View><Text>{visited}</Text></View>
-      <View><Text>{total}</Text></View>
+      <View><Text style={styles.text1ln}>ПОСЕТИЛИ</Text></View>
+      <View><Text style={styles.text1ln}>ОЖИДАЕТСЯ</Text></View>
+    </View>
+    <View style={styles.progressBarText}>
+      <View><Text style={styles.text2ln}>{visited}</Text></View>
+      <View><Text style={styles.text2ln}>{total}</Text></View>
     </View>
   </View>
 );
 
 const styles = StyleSheet.create({
-  progressBar: {
+  container: {
     alignItems: 'center',
     marginVertical: 10,
     borderColor: '#ff9792',
     borderWidth: 1
   },
+  progressBar: {
+    marginBottom: 5,
+  },
   progressBarText: {
     width: sizes.window.finderWidth - 9,
     flexDirection: 'row',
     justifyContent: 'space-between',
-  }
+  },
+  text1ln: {
+    fontFamily: 'FuturaMedium',
+    fontSize: 14,
+  },
+  text2ln: {
+    fontFamily: 'FuturaMedium',
+    fontSize: 24,
+  },
 });
 
 export default ProgressBar;

@@ -21,11 +21,18 @@ export default function useCachedResources(setStatusHandler, setTicketsHandler) 
         //   'space-mono': require('../assets/fonts/SpaceMono-Regular.ttf'),
         // });
         await Font.loadAsync({
-          "OpenSans-Regular": require("../assets/fonts/OpenSans-Regular.ttf"),
+          "FuturaBook": require("../assets/fonts/FuturaPTCondBook.otf"),
         });
         await Font.loadAsync({
-          "OpenSans-Bold": require("../assets/fonts/OpenSans-Bold.ttf"),
+          "FuturaBold": require("../assets/fonts/FuturaPTCondBold.otf"),
         });
+        await Font.loadAsync({
+          "FuturaExtraBold": require("../assets/fonts/FuturaPTCondExtraBold.otf"),
+        })
+        await Font.loadAsync({
+          "FuturaMedium": require("../assets/fonts/FuturaPTCondMedium.otf"),
+        })
+
 
         // fetch data
         // await AsyncStorage.removeItem("tickets");

@@ -7,7 +7,8 @@ export const Colors = {
   privileged: '#fbb03b',
   free: '#29abe2',
   alert: '#ff5050',
-  greetings: '#cacaca'
+  greetings: '#cacaca',
+  white: '#fff'
 };
 
 export default {

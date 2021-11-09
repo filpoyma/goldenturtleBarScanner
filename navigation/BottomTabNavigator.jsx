@@ -3,13 +3,14 @@ import React from "react";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {createStackNavigator} from "@react-navigation/stack";
 // import FAwesomeIcon from "react-native-vector-icons/FontAwesome5";
-import {Image, TouchableOpacity} from "react-native";
+import {Image, TouchableOpacity, View} from "react-native";
 
 // import Colors from "../constants/Colors";
 // import useColorScheme from "../hooks/useColorScheme";
 import BarCodeScanScreen from "../screens/BarCodeScanScreen";
 import AboutScreen from "../screens/AboutScreen";
 import ButtonTab from "../components/ButtonTab";
+import Null from "../components/Null"
 import Context from "../context";
 
 
@@ -32,6 +33,7 @@ export default function BottomTabNavigator() {
           backgroundColor: '#f7f7f7',
           tabBarHideOnKeyboard: true,
 
+
           tabBarIcon: ({color}) => (
             <Image source={require('../assets/images/search.png')}
                           style={{
@@ -45,6 +47,7 @@ export default function BottomTabNavigator() {
             {
               display: "flex",
               height: 95,
+              elevation: 0,
             },
             null,
           ],
@@ -69,13 +72,14 @@ export default function BottomTabNavigator() {
             {
               display: "flex",
               height: 95,
+              elevation: 0,
             },
             null,
           ],
         }}
       />
       <BottomTab.Screen name="Settings"
-                        component={AboutNavigator}
+                        component={Null}
                         options={({navigation}) => ({
                           title: "",
                           tabBarShowLabel: false,
@@ -89,9 +93,7 @@ export default function BottomTabNavigator() {
                                      opacity: isTorch ? 1 : 0.7
                                    }}
                             /> )
-
                         })
-
                         }/>
     </BottomTab.Navigator>
 
