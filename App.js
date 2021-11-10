@@ -32,6 +32,7 @@ export default function App() {
   const setTicketsHandler = (tickets) => {setTickets(tickets);};
 
   // console.log('App status:', status);
+  console.log('App tickets:', tickets.map(el => el.used));
 
   const isLoadingComplete = useCachedResources(setStatusHandler, setTicketsHandler);
   const colorScheme = useColorScheme();

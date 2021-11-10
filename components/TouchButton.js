@@ -1,8 +1,6 @@
-import React from "react";
-import { TouchableOpacity } from "react-native";
-import Button from "./ButtonTab";
-
-
+import React from 'react';
+import { TouchableOpacity } from 'react-native';
+import Button from './ButtonTab';
 
 const TouchebleButton = (props) => {
   return (

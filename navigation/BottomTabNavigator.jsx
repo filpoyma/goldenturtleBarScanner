@@ -12,6 +12,7 @@ import AboutScreen from "../screens/AboutScreen";
 import ButtonTab from "../components/ButtonTab";
 import Null from "../components/Null"
 import Context from "../context";
+import SearchScreen from "../screens/SearchScreen";
 
 
 const BottomTab = createBottomTabNavigator();
@@ -131,7 +132,7 @@ function SearchNavigator() {
     <SearchStack.Navigator>
       <SearchStack.Screen
         name="SearchScreen"
-        component={BarCodeScanScreen}
+        component={SearchScreen}
         options={{headerTitle: "Search"}}
       />
     </SearchStack.Navigator>

@@ -1,47 +1,56 @@
 import React from 'react';
-import {Text, View} from "./Themed";
-import {StyleSheet, Image} from "react-native";
-import sizes from "../constants/Layout";
-import TICKETS from "../constants/tiketsNames";
-import dayjs from "dayjs";
-import {Colors} from "../constants/Colors";
+import { Text, View } from './Themed';
+import { StyleSheet, Image } from 'react-native';
+import sizes from '../constants/Layout';
+import TICKETS from '../constants/tiketsNames';
+import dayjs from 'dayjs';
+import { Colors } from '../constants/Colors';
 
-const ScannedResult = ({ticketType = {}, ticketData = {}}) => {
+const ScannedResult = ({ ticketType = {}, ticketData = {} }) => {
+  if (ticketType.name === TICKETS.notFound.name || ticketType.name === TICKETS.greetings.name)
+    return (
+      <View style={styles.container(ticketType.color)}>
+        <View style={styles.textLeft}>
+          <Text style={styles.text2ln}>{ticketType.name}</Text>
+        </View>
+        <View style={styles.image}>
+          <Image style={styles.tinyLogo} source={ticketType.img} />
+        </View>
+        <View style={styles.textRight}>
+          <Text style={styles.text2ln}>{ticketType.additional || ticketType.name}</Text>
+        </View>
+      </View>
+    );
 
-  if ((ticketType.name === TICKETS.notFound.name) || (ticketType.name === TICKETS.greetings.name))
-    return <View style={styles.container(ticketType.color)}>
+  if (ticketType.name === TICKETS.searchResults.name)
+    return (
+      <View style={styles.container(ticketType.color)}>
+        <View style={styles.textLeftSearch}>
+          <Text style={styles.text2ln}>{ticketType.name}</Text>
+        </View>
+        <View style={styles.textRight}>
+          <Text style={styles.text2ln}>{ticketType.additional}: {ticketData.searched || 0}</Text>
+        </View>
+      </View>
+    );
+
+  return (
+    <View style={styles.container(ticketType.color)}>
       <View style={styles.textLeft}>
-        <Text style={styles.text2ln}>{ticketType.name}</Text>
+        <Text style={styles.text1ln}>{ticketType.name}</Text>
+        <Text style={styles.text2ln}>№{ticketData.id?.slice(0, 19)}</Text>
+        <Text style={styles.text3ln}>{dayjs(ticketData.date).format('DD-MM-YYYY hh:mm')}</Text>
       </View>
       <View style={styles.image}>
-        <Image
-          style={styles.tinyLogo}
-          source={ticketType.img}
-        />
+        <Image style={styles.tinyLogo} source={ticketType.img} />
       </View>
       <View style={styles.textRight}>
-        <Text style={styles.text2ln}>{ticketType.additional || ticketType.name}</Text>
+        <Text style={styles.text1ln}>{ticketData.name?.toUpperCase()}</Text>
+        <Text style={styles.text2ln}>{ticketData.phone?.replace(/[-]/gi, '')}</Text>
+        <Text style={styles.text3ln}>{ticketData.email}</Text>
       </View>
-    </View>;
-
-  return <View style={styles.container(ticketType.color)}>
-    <View style={styles.textLeft}>
-      <Text style={styles.text1ln}>{ticketType.name}</Text>
-      <Text style={styles.text2ln}>№{ticketData.id?.slice(0, 19)}</Text>
-      <Text style={styles.text3ln}>{dayjs(ticketData.date).format('DD-MM-YYYY hh:mm')}</Text>
     </View>
-    <View style={styles.image}>
-      <Image
-        style={styles.tinyLogo}
-        source={ticketType.img}
-      />
-    </View>
-    <View style={styles.textRight}>
-      <Text style={styles.text1ln}>{ticketData.name?.toUpperCase()}</Text>
-      <Text style={styles.text2ln}>{ticketData.phone.replace(/[-]/ig, '')}</Text>
-      <Text style={styles.text3ln}>{ticketData.email}</Text>
-    </View>
-  </View>
+  );
 };
 
 const styles = StyleSheet.create({
@@ -52,24 +61,28 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: sizes.window.finderWidth,
-    // height:80,
+    height: 67,
     backgroundColor: backgroundColor,
     zIndex: 10,
     borderColor: '#ff9792',
     borderWidth: 1
-
   }),
   textLeft: {
     alignItems: 'flex-start',
     justifyContent: 'center',
     backgroundColor: 'transparent',
-    width: (sizes.window.finderWidth - 90) /2,
+    width: (sizes.window.finderWidth - 90) / 2
+  },
+  textLeftSearch: {
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
   },
   textRight: {
     alignItems: 'flex-end',
     justifyContent: 'center',
     backgroundColor: 'transparent',
-    width: (sizes.window.finderWidth - 90) /2
+    width: (sizes.window.finderWidth - 90) / 2
   },
   text1ln: {
     fontFamily: 'FuturaMedium',
@@ -78,7 +91,7 @@ const styles = StyleSheet.create({
   },
   text2ln: {
     fontFamily: 'FuturaMedium',
-    fontSize: 24,
+    fontSize: 22,
     color: Colors.white
   },
   text3ln: {
@@ -88,12 +101,12 @@ const styles = StyleSheet.create({
   },
   tinyLogo: {
     width: 60,
-    height: 60,
+    height: 60
   },
   image: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'transparent',
+    backgroundColor: 'transparent'
   }
 });
 

@@ -185,6 +185,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     // width: 100,
     // height: 100
+    borderColor: '#ff9792',
+    borderWidth: 1
   },
   button: {
     // flex: 1,

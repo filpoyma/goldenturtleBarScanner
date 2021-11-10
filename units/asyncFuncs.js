@@ -1,40 +1,52 @@
-import { BASEURL } from "../constants/urls";
-import {isObjEmpty} from "./checkFincs";
+import { BASEURL } from '../constants/urls';
+import { isObjEmpty } from './checkFincs';
 import fetch from 'cross-fetch';
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import {findByIdInStor, getTicketsArrFromStor} from "./localStorFuncs";
-import {localDb} from "../constants/tiketsNames";
+import { findByIdInStor, getTicketsArrFromStor } from './localStorFuncs';
+import { localDb } from '../constants/tiketsNames';
 
 export const getAllTickets = async () => {
-  const res = await fetch(`${BASEURL}/qrappZZZ?id=all`);
-  console.log("file-res.status :", res.status);
+  const res = await fetch(`${BASEURL}/qrapp?id=all&key=LulmDZjBr1EwMxHuJ2iFlyo1742sqRcJ`);
+  console.log('file-res.status :', res.status);
   if (res.status === 200) return { data: await res.json(), err: null };
   else return { err: res.status, data: null };
 };
 
 export const getTicketById = async (id) => {
-  const res = await fetch(`${BASEURL}/qrapp?id=${id}`);
+  const res = await fetch(`${BASEURL}/qrapp?id=${id}&key=LulmDZjBr1EwMxHuJ2iFlyo1742sqRcJ`);
   if (res.status === 200) {
     const data = await res.json();
-    if(isObjEmpty(data)) return { data: null, err: null };
+    if (isObjEmpty(data)) return { data: null, err: null };
     return { data: data, err: null };
+  } else return { err: res.status, data: null };
+};
+
+export const searchTickets = async (data) => {
+  try {
+    const res = await fetch(`${BASEURL}/qrapp?search&key=LulmDZjBr1EwMxHuJ2iFlyo1742sqRcJ&data=${data}`);
+    if (res.status === 200) {
+      const data = (await res.json()) || [];
+      return { data: data, err: null };
+    } else return { err: res.status, data: null };
+  } catch (e) {
+    console.warn('Search Error:', e.message);
+    return { err: e.message, data: null };
   }
-  else return { err: res.status, data: null };
 };
 
 export const updateTicket = async (ticket) => {
-  const res = await fetch(`${BASEURL}/qrappZZZ`, {
-    method: "POST",
+  const res = await fetch(`${BASEURL}/qrapp`, {
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json'
       // 'Content-Type': 'application/x-www-form-urlencoded',
     },
     body: JSON.stringify({
       id: ticket.data.id,
       used: ticket.data.used,
-      key: "LulmDZjBr1EwMxHuJ2iFlyo1742sqRcJ",
-    }),
+      key: 'LulmDZjBr1EwMxHuJ2iFlyo1742sqRcJ'
+    })
   });
   if (res.status === 200) return { data: await res.json(), err: null };
   else return { data: null, err: res.status };
@@ -49,19 +61,18 @@ export const getTicket = async (id) => {
 
   if (ticket.err) return { err: ticket.err, data: null, isOnline: false };
 
-  return { err: "not found", data: null, isOnline: true };
+  return { err: 'not found', data: null, isOnline: true };
 };
 
 export const syncTickets = async () => {
   const unsyncTickets = await getTicketsArrFromStor(localDb.unsyncTickets);
-  if(Array.isArray(unsyncTickets) && unsyncTickets.length !== 0) {
+  if (Array.isArray(unsyncTickets) && unsyncTickets.length !== 0) {
     const promices = unsyncTickets.map((ticket) => {
-      return updateTicket({data: ticket})
+      return updateTicket({ data: ticket });
     });
     const data = await Promise.all(promices);
     const isSyncError = data.some((el) => el.err);
-    if(!isSyncError) await AsyncStorage.removeItem(localDb.unsyncTickets);
+    if (!isSyncError) await AsyncStorage.removeItem(localDb.unsyncTickets);
     return !isSyncError;
   }
 };
-
