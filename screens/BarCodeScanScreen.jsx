@@ -34,8 +34,16 @@ export default function BarCodeScanScreen({ route, navigation }) {
     type: TICKETS.greetings,
     data: {},
   });
-  const { status, setStatusHandler, isTorch, tickets, setTickets } = React.useContext(Context);
+  const { status, setStatusHandler, isTorch, tickets, setTicketsHandler } = React.useContext(Context);
   const isFocused = useIsFocused();
+
+  useEffect(() => {
+    console.log('BarCodeScanScreen useEffect: route.params.id', route.params?.id);
+    if(route.params && route.params.id) {
+      handleBarCodeScanned({data: route.params.id});
+
+    }
+  }, [isFocused]);
 
   useEffect(() => {
     (async () => {
@@ -46,10 +54,12 @@ export default function BarCodeScanScreen({ route, navigation }) {
 
   const handleBarCodeScanned = async (scannedResult) => {
     let ticket = {};
-    if (!scanned) {
+    if (!scanned || route.params?.id) {
+      route.params = undefined;
       const { type, data: id } = scannedResult; // data === 'string'
       setScanned(true);
       try {
+        console.log("Поиск билетов...");
         ticket = await getTicket(id);
         if (!ticket.err && ticket.data) {
           //  билет найден
@@ -71,7 +81,7 @@ export default function BarCodeScanScreen({ route, navigation }) {
 
           ticket.data.used = "1";
           const stat = await updateTicket(ticket); //  запись использованного билета в удаленную бд
-          await updateTicketToStor(tickets, setTickets, ticket); //  запись использованного билета в локальную бд
+          await updateTicketToStor(tickets, setTicketsHandler, ticket); //  запись использованного билета в локальную бд
 
 
           if (!stat.err && stat.data?.status === "ok") {
@@ -108,7 +118,8 @@ export default function BarCodeScanScreen({ route, navigation }) {
             ? Alert.alert("билет не найден")
             : Alert.alert("билет не найден из за ошибке на сервере");
         }
-        await syncTickets(); //  синхронизация unsyncTickets  с удаленной БД
+        const err = await syncTickets(); //  синхронизация unsyncTickets  с удаленной БД
+        if(err) console.warn('Ош. синхронизации отскан. билетов', err)
       } catch (e) {
         console.log("Exeption Error:", e);
       }

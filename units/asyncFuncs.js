@@ -48,7 +48,8 @@ export const updateTicket = async (ticket) => {
       key: 'LulmDZjBr1EwMxHuJ2iFlyo1742sqRcJ'
     })
   });
-  if (res.status === 200) return { data: await res.json(), err: null };
+  const data = await res.json();
+  if (res.status === 200) return { data: data, err: null };
   else return { data: null, err: res.status };
 };
 
@@ -67,10 +68,10 @@ export const getTicket = async (id) => {
 export const syncTickets = async () => {
   const unsyncTickets = await getTicketsArrFromStor(localDb.unsyncTickets);
   if (Array.isArray(unsyncTickets) && unsyncTickets.length !== 0) {
-    const promices = unsyncTickets.map((ticket) => {
+    const promises = unsyncTickets.map((ticket) => {
       return updateTicket({ data: ticket });
     });
-    const data = await Promise.all(promices);
+    const data = await Promise.all(promises);
     const isSyncError = data.some((el) => el.err);
     if (!isSyncError) await AsyncStorage.removeItem(localDb.unsyncTickets);
     return !isSyncError;

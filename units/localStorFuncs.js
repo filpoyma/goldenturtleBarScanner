@@ -9,7 +9,7 @@ export const getTicketsArrFromStor = async (type) => {
 };
 
 export const updateTicketToStor = (tickets, setTickets, ticket) => {
-  // const tickets = await getTicketsArrFromStor(localDb.tickets);
+
   const updatedTickets = tickets.map((el) => {
     if (el.id === ticket.data.id) return {...el, used: ticket.data.used};
     else return el;

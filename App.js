@@ -39,7 +39,7 @@ export default function App() {
     return (
       <SafeAreaProvider>
         <Context.Provider
-          value={{ status, setStatusHandler, isTorch, setTorchHandler, tickets, setTickets }}
+          value={{ status, setStatusHandler, isTorch, setTorchHandler, tickets, setTicketsHandler }}
         >
           <Navigation colorScheme={colorScheme} />
         </Context.Provider>

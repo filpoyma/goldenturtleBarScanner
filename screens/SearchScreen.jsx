@@ -1,8 +1,7 @@
 import React from 'react';
 
 import { useIsFocused } from '@react-navigation/native';
-import { StyleSheet, FlatList } from 'react-native';
-import {Text, View} from '../components/Themed';
+import { StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
 
 import Context from '../context';
 import ProgressBar from '../components/ProgressBar';
@@ -12,7 +11,9 @@ import TICKETS from '../constants/tiketsNames';
 import SearchPanel from '../components/SearchPanel';
 import { getVisited } from '../units/localStorFuncs';
 import { getTicketType } from '../units/convertFuncs';
-import Null from "../components/Null";
+import { View } from '../components/Themed';
+import Null from '../components/Null';
+
 
 export default function SearchScreen({ route, navigation }) {
   const isFocused = useIsFocused();
@@ -24,8 +25,24 @@ export default function SearchScreen({ route, navigation }) {
 
   React.useEffect(() => {
     !isFocused && setSTickets([]);
-  },[isFocused]);
+  }, [isFocused]);
 
+  const onTapTicket = (ticket) => {
+    if(ticket.used == '1') return;
+    Alert.alert(
+      'Выбор билета!',
+      'Нажимая на кнопку OK подтверждаете билет. Эта операция невозвратная!',
+      [{ text: 'OK', onPress: () => {onChoiceTicket(ticket.id)} }, { text: 'Cancel' }],
+      { cancelable: false }
+    );
+  };
+
+  const onChoiceTicket = (id) => {
+    navigation.navigate({
+      name: 'BarCodeScanScreen',
+      params: { id: id }
+    });
+  };
   return (
     <View style={styles.container}>
       <ProgressBar
@@ -37,24 +54,29 @@ export default function SearchScreen({ route, navigation }) {
 
       <ScannedResult ticketType={TICKETS.searchResults} ticketData={{ searched: searchedTickets.length }} />
 
-
-
-      {searchedTickets.length ? (<FlatList
-        data={searchedTickets}
-        keyExtractor={(item) => item.id}
-        ListEmptyComponent={Null}
-        ListFooterComponent={Null}
-        renderItem={(itemDada) => (
-          <View>
-            <ScannedResult
-              ticketType={getTicketType({ data: itemDada.item })}
-              ticketData={itemDada.item || {}}
-            />
-          </View>
-        )}
-      />) : <View style={{ height: sizes.window.finderWidth }}>
-        <SearchPanel setSearchedTickets={setSTicketsHandler} />
-      </View>}
+      {searchedTickets.length ? (
+        <FlatList
+          data={searchedTickets}
+          keyExtractor={(item) => item.id}
+          ListEmptyComponent={Null}
+          ListFooterComponent={Null}
+          renderItem={(itemDada) => (
+            <TouchableOpacity
+              activeOpacity={0.5}
+              onPress={() => {onTapTicket(itemDada.item)}}
+            >
+              <ScannedResult
+                ticketType={getTicketType({ data: itemDada.item })}
+                ticketData={itemDada.item || {}}
+              />
+            </TouchableOpacity>
+          )}
+        />
+      ) : (
+        <View style={{ height: sizes.window.finderWidth }}>
+          <SearchPanel setSearchedTickets={setSTicketsHandler} />
+        </View>
+      )}
     </View>
   );
 }
@@ -65,21 +87,6 @@ const styles = StyleSheet.create({
     // paddingTop: 10,
     paddingHorizontal: sizes.border.viewMinX,
     justifyContent: 'space-evenly'
-  },
-  camera: {
-    flex: 1,
-    // width: finderWidth,
-    justifyContent: 'center',
-    alignItems: 'center'
-    // width: 100,
-    // height: 100
-  },
-  button: {
-    // flex: 1,
-    // alignItems: "center",
-    justifyContent: 'flex-end',
-    backgroundColor: 'transparent',
-    marginBottom: 5
   },
   title: {
     fontSize: 20,

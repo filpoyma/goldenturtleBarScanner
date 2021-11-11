@@ -12,7 +12,7 @@ const SearchPanel = ({ setSearchedTickets }) => {
     console.log(text);
     onChangeText('');
     Keyboard.dismiss();
-    const tickets = await searchTickets(text);
+    const tickets = await searchTickets(text); //todo сделать поиск билета по email, id  в локальной бд
     if (!tickets.err && tickets.data && Array.isArray(tickets.data) && tickets.data.length)
       setSearchedTickets(tickets.data);
     if (tickets.err) return Alert.alert(`Ошибка поиска ${tickets.err}`);
