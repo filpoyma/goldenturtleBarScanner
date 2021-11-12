@@ -2,7 +2,7 @@
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import React from 'react';
-import { getAllTickets } from '../units/asyncFuncs';
+import {getAllTickets, syncTickets} from '../units/asyncFuncs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { localDb } from '../constants/tiketsNames';
 
@@ -33,6 +33,7 @@ export default function useCachedResources(setStatusHandler, setTicketsHandler) 
         // await AsyncStorage.removeItem("tickets");
         // await AsyncStorage.removeItem("unsynctickets");
         const res = await getAllTickets(); //todo как загружать билеты только на текущее мероприятие?
+         const err = await syncTickets(); // синхронизация билетов, погашенных в оффлайне
         // console.log('res.data', res.data);
         // console.log('res. error', res.error);
         if (!res.err && Array.isArray(res.data)) {

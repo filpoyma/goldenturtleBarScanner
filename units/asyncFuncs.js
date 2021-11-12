@@ -22,16 +22,17 @@ export const getTicketById = async (id) => {
   } else return { err: res.status, data: null };
 };
 
-export const searchTickets = async (data) => {
+export const searchTickets = async (text) => {
+  if(!text) return { data: [], err: null };
   try {
-    const res = await fetch(`${BASEURL}/qrapp?search&key=LulmDZjBr1EwMxHuJ2iFlyo1742sqRcJ&data=${data}`);
+    const res = await fetch(`${BASEURL}/qrapp?search&key=LulmDZjBr1EwMxHuJ2iFlyo1742sqRcJ&data=${text}`);
     if (res.status === 200) {
       const data = (await res.json()) || [];
       return { data: data, err: null };
-    } else return { err: res.status, data: null };
+    } else return {data: null, err: res.status };
   } catch (e) {
     console.warn('Search Error:', e.message);
-    return { err: e.message, data: null };
+    return {data: null, err: e.message };
   }
 };
 
@@ -48,8 +49,7 @@ export const updateTicket = async (ticket) => {
       key: 'LulmDZjBr1EwMxHuJ2iFlyo1742sqRcJ'
     })
   });
-  const data = await res.json();
-  if (res.status === 200) return { data: data, err: null };
+  if (res.status === 200) return { data: await res.json(), err: null };
   else return { data: null, err: res.status };
 };
 

@@ -11,18 +11,11 @@ import Context from "./context";
 /**
  * @return {null}
  */
+// todo проверить работу unsinced tickets
+// todo  переделать логику, в случае недоступности сети
+// todo react-native-community/netinfo
 
 export default function App() {
-  // data: {data: [
-  // {
-  //     "date": "0000-00-00",
-  //     "email": "test@test.ru",
-  //     "howmuch": "1",
-  //     "id": "1",
-  //     "name": "test",
-  //     "phone": "8-111-111-11-11",
-  //     "type": "полный",
-  //     "used": "0"}], err: }
   const [status, setStatus] = React.useState({err: null, isOnline: false});
   const [tickets, setTickets] = React.useState([]);
   const [isTorch, setTorch] = React.useState(false);
@@ -30,7 +23,6 @@ export default function App() {
   const setStatusHandler = (data) => {setStatus(data);};
   const setTorchHandler = () => {setTorch((state) => !state)};
   const setTicketsHandler = (tickets) => {setTickets(tickets);};
-
   const isLoadingComplete = useCachedResources(setStatusHandler, setTicketsHandler);
   const colorScheme = useColorScheme();
   if (!isLoadingComplete) {

@@ -63,7 +63,7 @@ export default function BarCodeScanScreen({ route, navigation }) {
         ticket = await getTicket(id);
         if (!ticket.err && ticket.data) {
           //  билет найден
-          console.log("BarCodeScanScreen билет найден:");
+          console.log("BarCodeScanScreen билет найден:", ticket.data.id);
 
           ticket = ticketDataConverter(ticket);
 

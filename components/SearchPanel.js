@@ -4,6 +4,7 @@ import { View, StyleSheet, TextInput, Keyboard, Alert } from 'react-native';
 import TouchebleButton from './TouchButton';
 import sizes from '../constants/Layout';
 import { searchTickets } from '../units/asyncFuncs';
+import { findByTextInStor } from '../units/localStorFuncs';
 
 const SearchPanel = ({ setSearchedTickets }) => {
   const [text, onChangeText] = React.useState('');
@@ -12,16 +13,28 @@ const SearchPanel = ({ setSearchedTickets }) => {
     console.log(text);
     onChangeText('');
     Keyboard.dismiss();
-    const tickets = await searchTickets(text); //todo сделать поиск билета по email, id  в локальной бд
+    let tickets = await searchTickets(text);
     if (!tickets.err && tickets.data && Array.isArray(tickets.data) && tickets.data.length)
-      setSearchedTickets(tickets.data);
-    if (tickets.err) return Alert.alert(`Ошибка поиска ${tickets.err}`);
-    if (tickets.data.length === 0) {
-      Alert.alert('Билеты не найдены');
-      setSearchedTickets([]);
-    }
-  };
+      return setSearchedTickets(tickets.data);
 
+    if (!tickets.err && tickets.data?.length === 0) console.log(' Билеты в удаленной БД не найдены.');
+    if (tickets.err) {
+      console.warn('Ош. поиска в удаленной базе данных. Подключитесь к интернету', tickets.err);
+      console.log('поиск в локальном сторе...')
+      tickets = await findByTextInStor(text); //  поиск в локал стор, если ошибка поиска в удаленной базе
+      if (!tickets.err && tickets.data && Array.isArray(tickets.data) && tickets.data.length)
+        return setSearchedTickets(tickets.data);
+      if (tickets.err)
+        console.warn('Ош. поиска в локальной базе данных.', tickets.err);
+    }
+
+    if (!tickets.data) {
+      Alert.alert('Билеты не найдены');
+      return setSearchedTickets([]);
+    }
+
+    if (tickets.err) return Alert.alert(`Ошибка поиска ${tickets.err}`);
+  };
 
   return (
     <View style={styles.container}>
