@@ -1,27 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 
-import { useIsFocused } from "@react-navigation/native";
-import { Button, StyleSheet, Alert } from "react-native";
-import { Text, View } from "../components/Themed";
-import { BarCodeScanner } from "expo-barcode-scanner";
-import BarcodeMask from "react-native-barcode-mask";
-import { Camera } from "expo-camera";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useIsFocused } from '@react-navigation/native';
+import { Button, StyleSheet, Alert } from 'react-native';
+import { Text, View } from '../components/Themed';
+import { BarCodeScanner } from 'expo-barcode-scanner';
+import BarcodeMask from 'react-native-barcode-mask';
+import { Camera } from 'expo-camera';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import Context from "../context";
-import ProgressBar from "../components/ProgressBar";
-import ScannedResult from "../components/ScannedResult";
-import sizes from "../constants/Layout";
+import Context from '../context';
+import ProgressBar from '../components/ProgressBar';
+import ScannedResult from '../components/ScannedResult';
+import sizes from '../constants/Layout';
 // import { Colors } from "../constants/Colors";
-import TICKETS from "../constants/tiketsNames";
-import SearchPanel from "../components/SearchPanel";
-import { getTicket, syncTickets, updateTicket } from "../units/asyncFuncs";
-import {
-  addUnSyncTicketToStor,
-  getVisited,
-  updateTicketToStor,
-} from "../units/localStorFuncs";
-import { getTicketType, ticketDataConverter } from "../units/convertFuncs";
+import TICKETS from '../constants/tiketsNames';
+import SearchPanel from '../components/SearchPanel';
+import { getTicket, syncTickets, updateTicket } from '../units/asyncFuncs';
+import { addUnSyncTicketToStor, getVisited, updateTicketToStor } from '../units/localStorFuncs';
+import { getTicketType, ticketDataConverter } from '../units/convertFuncs';
 
 const type = Camera.Constants.Type.back;
 const torchOff = Camera.Constants.FlashMode.off;
@@ -32,104 +28,94 @@ export default function BarCodeScanScreen({ route, navigation }) {
   const [scanned, setScanned] = useState(false);
   const [ticket, setTicket] = React.useState({
     type: TICKETS.greetings,
-    data: {},
+    data: {}
   });
   const { status, setStatusHandler, isTorch, tickets, setTicketsHandler } = React.useContext(Context);
   const isFocused = useIsFocused();
 
   useEffect(() => {
     console.log('BarCodeScanScreen useEffect: route.params.id', route.params?.id);
-    if(route.params && route.params.id) {
-      handleBarCodeScanned({data: route.params.id});
-
+    if (route.params && route.params.id) {
+      handleBarCodeScanned({ data: route.params.id });
     }
   }, [isFocused]);
 
   useEffect(() => {
     (async () => {
       const { status } = await Camera.requestPermissionsAsync();
-      setHasPermission(status === "granted");
+      setHasPermission(status === 'granted');
     })();
   }, []);
 
-  const handleBarCodeScanned = async (scannedResult) => {
+  const handleBarCodeScanned = async ({ type, data: id }) => {
     let ticket = {};
     if (!scanned || route.params?.id) {
       route.params = undefined;
-      const { type, data: id } = scannedResult; // data === 'string'
       setScanned(true);
-      try {
-        console.log("Поиск билетов...");
-        ticket = await getTicket(id);
-        if (!ticket.err && ticket.data) {
-          //  билет найден
-          console.log("BarCodeScanScreen билет найден:", ticket.data.id);
 
-          ticket = ticketDataConverter(ticket);
+      console.log('Поиск билетов...');
+      ticket = await getTicket(id);
+      if (!ticket.err && ticket.data) {
+        //  билет найден
+        console.log('BarCodeScanScreen билет найден:', ticket.data.id);
 
-          setTicket({
-            type: getTicketType(ticket),
-            data: ticket.data,
-          });
+        ticket = ticketDataConverter(ticket);
+
+        setTicket({
+          type: getTicketType(ticket),
+          data: ticket.data
+        });
+        setStatusHandler({
+          err: null,
+          isOnline: ticket.isOnline
+        });
+        if (ticket.data.used === '1' || ticket.data.used === 1) console.log('билет уже использован');
+        if (ticket.data.used === '1' || ticket.data.used === 1) return; // билет уже использован
+
+        ticket.data.used = '1';
+        const stat = await updateTicket(ticket); //  запись использованного билета в удаленную бд
+        await updateTicketToStor(tickets, setTicketsHandler, ticket); //  запись использованного билета в локальную бд
+
+        if (!stat.err && stat.data?.status === 'ok') {
+          // билет "погашен" в удаленной базе
+          console.log('билет "погашен" в удаленной базе');
           setStatusHandler({
             err: null,
-            isOnline: ticket.isOnline,
+            isOnline: true
           });
-          if (ticket.data.used === "1" || ticket.data.used === 1)
-            console.log("билет уже использован");
-          if (ticket.data.used === "1" || ticket.data.used === 1) return; // билет уже использован
+        } else {
+          //  'билет не удалось записать в удаленную БД'
+          console.log('билет не удалось записать в удаленную БД... записываем билет в локалСтор');
+          ticket.data.used = '1';
+          await addUnSyncTicketToStor(ticket); // записываем билет в локалСтор несинхронизированных билетов
 
-          ticket.data.used = "1";
-          const stat = await updateTicket(ticket); //  запись использованного билета в удаленную бд
-          await updateTicketToStor(tickets, setTicketsHandler, ticket); //  запись использованного билета в локальную бд
-
-
-          if (!stat.err && stat.data?.status === "ok") {
-            // билет "погашен" в удаленной базе
-            console.log('билет "погашен" в удаленной базе');
-            setStatusHandler({
-              err: null,
-              isOnline: true,
-            });
-          } else {
-            //  'билет не удалось записать в удаленную БД'
-            console.log(
-              "билет не удалось записать в удаленную БД... записываем билет в локалСтор"
-            );
-            ticket.data.used = "1";
-            await addUnSyncTicketToStor(ticket); // записываем билет в локалСтор несинхронизированных билетов
-
-            setStatusHandler({
-              err: stat.err,
-              isOnline: false,
-            });
-          }
-        }
-        if (ticket.err) {
-          setTicket({
-            type: getTicketType(),
-            data: {},
-          });
           setStatusHandler({
-            err: ticket.err === "not found" ? null : ticket.err,
-            isOnline: ticket.isOnline,
+            err: stat.err,
+            isOnline: false
           });
-          ticket.err === "not found"
-            ? Alert.alert("билет не найден")
-            : Alert.alert("билет не найден из за ошибке на сервере");
         }
-        const err = await syncTickets(); //  синхронизация unsyncTickets  с удаленной БД
-        if(err) console.warn('Ош. синхронизации отскан. билетов', err)
-      } catch (e) {
-        console.log("Exeption Error:", e);
       }
+      if (ticket.err) {
+        setTicket({
+          type: getTicketType(),
+          data: {}
+        });
+        setStatusHandler({
+          err: ticket.err === 'not found' ? null : ticket.err,
+          isOnline: ticket.isOnline
+        });
+        ticket.err === 'not found'
+          ? Alert.alert('билет не найден')
+          : Alert.alert('билет не найден из за ошибке на сервере');
+      }
+      const err = await syncTickets(); //  синхронизация unsyncTickets  с удаленной БД
+      if (err) console.warn('Ош. синхронизации отскан. билетов', err);
 
       // Alert.alert(
       //   "Bar code has been scanned!",
       //   `Data: ${data}`
       // );
     }
-    console.log("unsynctickets", await AsyncStorage.getItem("unsynctickets"));
   };
 
   if (hasPermission === null) {
@@ -149,15 +135,15 @@ export default function BarCodeScanScreen({ route, navigation }) {
       <ScannedResult ticketType={ticket.type} ticketData={ticket.data} />
 
       <View style={{ height: sizes.window.finderWidth }}>
-        {route.name === "SearchScreen" && <SearchPanel />}
-        {route.name === "BarCodeScanScreen" && isFocused && (
+        {route.name === 'SearchScreen' && <SearchPanel />}
+        {route.name === 'BarCodeScanScreen' && isFocused && (
           <Camera
             onBarCodeScanned={!scanned ? handleBarCodeScanned : undefined}
             type={type}
             style={styles.camera}
             flashMode={isTorch ? torchOn : torchOff}
             barCodeScannerSettings={{
-              barCodeTypes: [BarCodeScanner.Constants.BarCodeType.qr],
+              barCodeTypes: [BarCodeScanner.Constants.BarCodeType.qr]
             }}
           >
             <BarcodeMask
@@ -187,13 +173,13 @@ const styles = StyleSheet.create({
     flex: 1,
     // paddingTop: 10,
     paddingHorizontal: sizes.border.viewMinX,
-    justifyContent: "space-evenly",
+    justifyContent: 'space-evenly'
   },
   camera: {
     flex: 1,
     // width: finderWidth,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     // width: 100,
     // height: 100
     borderColor: '#ff9792',
@@ -202,12 +188,12 @@ const styles = StyleSheet.create({
   button: {
     // flex: 1,
     // alignItems: "center",
-    justifyContent: "flex-end",
-    backgroundColor: "transparent",
-    marginBottom: 5,
+    justifyContent: 'flex-end',
+    backgroundColor: 'transparent',
+    marginBottom: 5
   },
   title: {
     fontSize: 20,
-    fontWeight: "bold",
-  },
+    fontWeight: 'bold'
+  }
 });

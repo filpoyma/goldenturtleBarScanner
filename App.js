@@ -7,6 +7,7 @@ import useCachedResources from "./hooks/useCachedResources";
 import useColorScheme from "./hooks/useColorScheme";
 import Navigation from "./navigation";
 import Context from "./context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 /**
  * @return {null}
@@ -16,6 +17,9 @@ import Context from "./context";
 // todo react-native-community/netinfo
 
 export default function App() {
+
+
+
   const [status, setStatus] = React.useState({err: null, isOnline: false});
   const [tickets, setTickets] = React.useState([]);
   const [isTorch, setTorch] = React.useState(false);
