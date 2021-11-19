@@ -14,7 +14,6 @@ export const getAllTickets = async () => {
   try {
     const res = await fetch(`${BASEURL}/qrapp?id=all&key=LulmDZjBr1EwMxHuJ2iFlyo1742sqRcJ`);
     handleError(res);
-    console.log('file-res.status :', res.status);
     return { data: await res.json(), err: null };
   } catch (err) {
     console.warn('getAllTickets error', err.message);
@@ -37,6 +36,7 @@ export const getTicketById = async (id) => {
 
 export const searchTickets = async (text) => {
   if (!text) return { data: [], err: null };
+  await syncTickets();
   try {
     const res = await fetch(`${BASEURL}/qrapp?search&key=LulmDZjBr1EwMxHuJ2iFlyo1742sqRcJ&data=${text}`);
     handleError(res);
@@ -71,11 +71,19 @@ export const updateTicket = async (ticket) => {
 };
 
 export const getTicket = async (id) => {
+  const resSync = await syncTickets(); // синхронизируем билеты, погашенные оффлайн
+  console.log('BarCodeScanScreen:', resSync);
   let ticket = await getTicketById(id); // сначало ищем в удаленной бд
-  if (!ticket.err && ticket?.data) return { err: null, data: ticket.data, isOnline: true }; // билет найден в удаленной базе
+  if (!ticket.err && ticket?.data) {
+    console.log('asyncFuncs билет найден в удаленной базе:');
+    return { err: null, data: ticket.data, isOnline: true }; // билет найден в удаленной базе
+  }
 
   const localTicket = await findByIdInStor(id); // потом в локальной бд
-  if (localTicket?.data) return { err: null, data: localTicket.data, isOnline: false }; //  билет найден в  локальной базе
+  if (localTicket?.data) {
+    console.log('asyncFuncs билет найден в локальной БД:');
+    return { err: null, data: localTicket.data, isOnline: false }; //  билет найден в  локальной базе
+  }
 
   if (ticket.err) return { err: ticket.err, data: null, isOnline: false };
 
@@ -84,13 +92,30 @@ export const getTicket = async (id) => {
 
 export const syncTickets = async () => {
   const unsyncTickets = await getTicketsArrFromStor(localDb.unsyncTickets);
+  console.log('asyncFuncs unsyncTickets length:', unsyncTickets?.length);
   if (Array.isArray(unsyncTickets) && unsyncTickets.length !== 0) {
     const promises = unsyncTickets.map((ticket) => {
       return updateTicket({ data: ticket });
     });
     const data = await Promise.all(promises);
     const isSyncError = data.some((el) => el.err);
-    if (!isSyncError) await AsyncStorage.removeItem(localDb.unsyncTickets);
-    return !isSyncError;
+    if (!isSyncError) {
+      await AsyncStorage.removeItem(localDb.unsyncTickets);
+      return 'synced'
+    }
+    return 'sync error';
+  } else return 'nothing sync'
+};
+
+export const setTicketToUnused = async () => {
+  const tickets = (await getAllTickets()).data;
+  if (Array.isArray(tickets) && tickets.length !== 0) {
+    const promises = tickets.map((ticket) => {
+      ticket.used = '0';
+      return updateTicket({ data: ticket });
+    });
+    const data = await Promise.all(promises);
+    const isError = data.some((el) => el.err);
+    return !isError;
   }
 };

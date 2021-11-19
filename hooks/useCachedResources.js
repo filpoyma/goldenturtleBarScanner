@@ -13,13 +13,13 @@ export default function useCachedResources(setStatusHandler, setTicketsHandler) 
   React.useEffect(() => {
     async function loadResourcesAndDataAsync() {
       SplashScreen.preventAutoHideAsync();
-      console.log("unsynctickets", await AsyncStorage.getItem("unsynctickets"));
 
       // fetch data
       // await AsyncStorage.removeItem("tickets");
       // await AsyncStorage.removeItem("unsynctickets");
+      const syncRes = await syncTickets(); // синхронизация билетов, погашенных в оффлайне
+      console.log(syncRes);
       const res = await getAllTickets(); //todo как загружать билеты только на текущее мероприятие?
-      const err = await syncTickets(); // синхронизация билетов, погашенных в оффлайне
       // console.log('res.data', res.data);
       // console.log('res. error', res.error);
       if (!res.err && Array.isArray(res.data)) {

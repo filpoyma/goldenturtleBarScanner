@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import {getAllTickets, getTicketById} from "../asyncFuncs";
+import {getAllTickets, getTicketById, setTicketToUnused} from "../asyncFuncs";
 // import {syncTickets} from "../localStorFuncs";
 // import renderer from 'react-test-renderer';
 //
@@ -16,14 +16,18 @@ import {getAllTickets, getTicketById} from "../asyncFuncs";
 //   expect(await getTicketById(200)).toBe({});
 // });
 
-it('getAllTickets', async () => {
-  jest.setTimeout(15000);
-  expect(await getAllTickets()).toBe(Object);
-
-}, 20000);
+// it('getAllTickets', async () => {
+//   jest.setTimeout(15000);
+//   expect(await getAllTickets()).toBe(Object);
+//
+// }, 20000);
 
 // it('syncTickets', async () => {
 //   expect(await syncTickets()).toBe({});
 // });
+
+it('setTicketToUnused', async () => {
+  expect(await setTicketToUnused()).toBe({});
+});
 
 

@@ -36,9 +36,11 @@ export const findByIdInStor = async (id) => {
 
 export const findByTextInStor = async (text) => {
   if(!text) return { data: [], err: null };
-  const tickets = await getTicketsArrFromStor(localDb.tickets);
-  const re = new RegExp(text);
+  const tickets = await getTicketsArrFromStor(localDb.tickets) || [];
+  console.log('localStorFuncs tickets length:', tickets.length);
+  const re = new RegExp(text, 'i');
   const findedTickets = tickets.filter((el) => re.test(el.email) || re.test(el.name));
+  console.log(tickets.map(t=> re.test(t.email).toString() + '-' + re.test(t.name).toString() + ' ' + t.email + '-' + t.name) );
   console.log('билеты найден в asyncLocalStor - ', findedTickets.length);
   return {data: findedTickets, err: null};
 

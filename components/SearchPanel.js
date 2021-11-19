@@ -3,11 +3,16 @@ import { View, StyleSheet, TextInput, Keyboard, Alert } from 'react-native';
 
 import TouchebleButton from './TouchButton';
 import sizes from '../constants/Layout';
-import { searchTickets } from '../units/asyncFuncs';
+import {searchTickets, setTicketToUnused} from '../units/asyncFuncs';
 import { findByTextInStor } from '../units/localStorFuncs';
 
 const SearchPanel = ({ setSearchedTickets }) => {
   const [text, onChangeText] = React.useState('');
+
+  const onReset = async () => {
+    const res = await setTicketToUnused();
+    Alert.alert(`Result ${res}`)
+  };
 
   const onSubmit = async () => {
     console.log(text);
@@ -20,7 +25,7 @@ const SearchPanel = ({ setSearchedTickets }) => {
     if (!tickets.err && tickets.data?.length === 0) console.log(' Билеты в удаленной БД не найдены.');
     if (tickets.err) {
       console.warn('Ош. поиска в удаленной базе данных. Подключитесь к интернету', tickets.err);
-      console.log('поиск в локальном сторе...')
+      console.log('поиск в локальном сторе...');
       tickets = await findByTextInStor(text); //  поиск в локал стор, если ошибка поиска в удаленной базе
       if (!tickets.err && tickets.data && Array.isArray(tickets.data) && tickets.data.length)
         return setSearchedTickets(tickets.data);
@@ -51,6 +56,7 @@ const SearchPanel = ({ setSearchedTickets }) => {
         // onFocus={() => onChangeText('')}
       />
       <TouchebleButton onPress={onSubmit}>НАЙТИ</TouchebleButton>
+      <TouchebleButton onPress={onReset}>RESET</TouchebleButton>
     </View>
   );
 };

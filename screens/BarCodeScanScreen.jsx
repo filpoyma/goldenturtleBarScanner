@@ -6,7 +6,6 @@ import { Text, View } from '../components/Themed';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import BarcodeMask from 'react-native-barcode-mask';
 import { Camera } from 'expo-camera';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Context from '../context';
 import ProgressBar from '../components/ProgressBar';
@@ -34,7 +33,6 @@ export default function BarCodeScanScreen({ route, navigation }) {
   const isFocused = useIsFocused();
 
   useEffect(() => {
-    console.log('BarCodeScanScreen useEffect: route.params.id', route.params?.id);
     if (route.params && route.params.id) {
       handleBarCodeScanned({ data: route.params.id });
     }
@@ -108,8 +106,8 @@ export default function BarCodeScanScreen({ route, navigation }) {
           ? Alert.alert('билет не найден')
           : Alert.alert('билет не найден из за ошибке на сервере');
       }
-      const err = await syncTickets(); //  синхронизация unsyncTickets  с удаленной БД
-      if (err) console.warn('Ош. синхронизации отскан. билетов', err);
+      const resSync = await syncTickets(); //  синхронизация unsyncTickets  с удаленной БД
+      console.log(resSync);
 
       // Alert.alert(
       //   "Bar code has been scanned!",
