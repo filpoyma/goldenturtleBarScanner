@@ -15,7 +15,6 @@ const SearchPanel = ({ setSearchedTickets }) => {
   };
 
   const onSubmit = async () => {
-    console.log(text);
     onChangeText('');
     Keyboard.dismiss();
     let tickets = await searchTickets(text);

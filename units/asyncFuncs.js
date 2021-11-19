@@ -1,80 +1,37 @@
-import { BASEURL } from '../constants/urls';
+import {BASEURL, KEY} from '../constants/urls';
 import { isObjEmpty } from './checkFincs';
-import fetch from 'cross-fetch';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { findByIdInStor, getTicketsArrFromStor } from './localStorFuncs';
 import { localDb } from '../constants/tiketsNames';
+import { Http } from './http';
 
-const handleError = (res) => {
-  if (!res.ok) throw Error(res.statusText);
-};
+export const getAllTickets = () =>
+  Http.get(`${BASEURL}/qrapp?id=all&key=${KEY}`);
 
-export const getAllTickets = async () => {
-  try {
-    const res = await fetch(`${BASEURL}/qrapp?id=all&key=LulmDZjBr1EwMxHuJ2iFlyo1742sqRcJ`);
-    handleError(res);
-    return { data: await res.json(), err: null };
-  } catch (err) {
-    console.warn('getAllTickets error', err.message);
-    return { data: null, err: err.message };
-  }
-};
-
-export const getTicketById = async (id) => {
-  try {
-    const res = await fetch(`${BASEURL}/qrapp?id=${id}&key=LulmDZjBr1EwMxHuJ2iFlyo1742sqRcJ`);
-    handleError(res);
-    const data = await res.json();
-    if (isObjEmpty(data)) return { data: null, err: null };
-    return { data: data, err: null };
-  } catch (err) {
-    console.warn('getTicketById error', err.message);
-    return { data: null, err: err.message };
-  }
-};
+export const getTicketById = (id) =>
+   Http.get(`${BASEURL}/qrapp?id=${id}&key=${KEY}`);
 
 export const searchTickets = async (text) => {
   if (!text) return { data: [], err: null };
   await syncTickets();
-  try {
-    const res = await fetch(`${BASEURL}/qrapp?search&key=LulmDZjBr1EwMxHuJ2iFlyo1742sqRcJ&data=${text}`);
-    handleError(res);
-      const data = (await res.json()) || [];
-      return { data: data, err: null };
-  } catch (err) {
-    console.warn('searchTickets Error:', err.message);
-    return { data: null, err: err.message };
-  }
+  return Http.get(`${BASEURL}/qrapp?search&data=${text}&key=${KEY}`);
 };
 
-export const updateTicket = async (ticket) => {
-  try {
-    const res = await fetch(`${BASEURL}/qrapp`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-        // 'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: JSON.stringify({
-        id: ticket.data.id,
-        used: ticket.data.used,
-        key: 'LulmDZjBr1EwMxHuJ2iFlyo1742sqRcJ'
-      })
-    });
-    handleError(res);
-    return {data: await res.json(), err: null};
-  } catch (err) {
-    console.warn('updateTicket Error:', err.message);
-    return { data: null, err: err.message };
-  }
+export const updateTicket = (ticket) => {
+  const data = {
+    id: ticket.data.id,
+    used: ticket.data.used,
+    key: 'LulmDZjBr1EwMxHuJ2iFlyo1742sqRcJ'
+  };
+  return Http.post(`${BASEURL}/qrapp`, data);
 };
 
 export const getTicket = async (id) => {
   const resSync = await syncTickets(); // синхронизируем билеты, погашенные оффлайн
   console.log('BarCodeScanScreen:', resSync);
   let ticket = await getTicketById(id); // сначало ищем в удаленной бд
-  if (!ticket.err && ticket?.data) {
+  if (!ticket.err && !isObjEmpty(ticket?.data)) {
     console.log('asyncFuncs билет найден в удаленной базе:');
     return { err: null, data: ticket.data, isOnline: true }; // билет найден в удаленной базе
   }
@@ -84,9 +41,7 @@ export const getTicket = async (id) => {
     console.log('asyncFuncs билет найден в локальной БД:');
     return { err: null, data: localTicket.data, isOnline: false }; //  билет найден в  локальной базе
   }
-
   if (ticket.err) return { err: ticket.err, data: null, isOnline: false };
-
   return { err: 'not found', data: null, isOnline: true };
 };
 
@@ -101,10 +56,10 @@ export const syncTickets = async () => {
     const isSyncError = data.some((el) => el.err);
     if (!isSyncError) {
       await AsyncStorage.removeItem(localDb.unsyncTickets);
-      return 'synced'
+      return 'synced';
     }
     return 'sync error';
-  } else return 'nothing sync'
+  } else return 'nothing sync';
 };
 
 export const setTicketToUnused = async () => {
