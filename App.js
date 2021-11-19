@@ -12,9 +12,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 /**
  * @return {null}
  */
-// todo проверить работу unsinced tickets
-// todo  переделать логику, в случае недоступности сети
+// todo проверить работу unsinced tickets - DONE
+// todo  переделать логику, в случае недоступности сети ( проверить как работает текущая логика на устройстве)
 // todo react-native-community/netinfo
+// todo  обьединить searchTickets(text) && findByTextInStor(text)
 
 export default function App() {
 
@@ -45,7 +46,3 @@ export default function App() {
   }
 }
 
- // todo подсчет билетов и сколько прошло - DONE
-// todo поиск билетов
-// todo  верстка, шрифты
-// todo unsynced stor - нужно синхронизировать -  DONE
