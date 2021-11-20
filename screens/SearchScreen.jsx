@@ -27,9 +27,6 @@ export default function SearchScreen({ route, navigation }) {
     !isFocused && setSTickets([]);
   }, [isFocused]);
 
-  React.useEffect(() => {
-    console.log('UPDATED', route);
-  });
 
   const onTapTicket = (ticket) => {
     if(ticket.used == '1') return;

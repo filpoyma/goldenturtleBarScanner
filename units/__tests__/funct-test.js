@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import {getAllTickets, getTicketById, setTicketToUnused} from "../asyncFuncs";
+import { getAllTickets, getTicket, getTicketById, setTicketToUnused } from '../asyncFuncs';
 // import {syncTickets} from "../localStorFuncs";
 // import renderer from 'react-test-renderer';
 //
@@ -12,22 +12,22 @@ import {getAllTickets, getTicketById, setTicketToUnused} from "../asyncFuncs";
 //   expect(tree).toMatchSnapshot();
 // });
 
-// it('getTicketById', async () => {
-//   expect(await getTicketById(200)).toBe({});
-// });
+it('getTicketById', async () => {
+  expect(await getTicket(0)).toEqual({ data: null, err: 'not found', isOnline: true });
+  expect(await getTicket(1)).toEqual({ data: expect.anything(), err: null, isOnline: true });
+});
 
-// it('getAllTickets', async () => {
-//   jest.setTimeout(15000);
-//   expect(await getAllTickets()).toBe(Object);
-//
-// }, 20000);
+it('getAllTickets', async () => {
+  // jest.setTimeout(15000);
+  expect(await getAllTickets()).toEqual(expect.anything());
+
+}, 20000);
 
 // it('syncTickets', async () => {
 //   expect(await syncTickets()).toBe({});
 // });
 
-it('setTicketToUnused', async () => {
-  expect(await setTicketToUnused()).toBe({});
-});
-
+// it('setTicketToUnused', async () => {
+//   expect(await setTicketToUnused()).toBe({});
+// });
 

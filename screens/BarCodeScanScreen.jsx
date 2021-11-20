@@ -76,13 +76,15 @@ export default function BarCodeScanScreen({ route, navigation }) {
 
         if (!stat.err && stat.data?.status === 'ok') {
           // билет "погашен" в удаленной базе
-          console.log('билет "погашен" в удаленной базе');
+          console.log('билет "погашен" в удаленной базе, status', stat.data?.status);
           setStatusHandler({
             err: null,
             isOnline: true
           });
         } else {
           //  'билет не удалось записать в удаленную БД'
+          console.warn('ош записи в удаленную бд', stat.err)
+          console.log('BarCodeScanScreen stat.data:', stat.data);
           console.log('билет не удалось записать в удаленную БД... записываем билет в локалСтор');
           ticket.data.used = '1';
           await addUnSyncTicketToStor(ticket); // записываем билет в локалСтор несинхронизированных билетов
