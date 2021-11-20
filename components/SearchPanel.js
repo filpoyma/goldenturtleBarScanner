@@ -3,7 +3,7 @@ import { View, StyleSheet, TextInput, Keyboard, Alert } from 'react-native';
 
 import TouchebleButton from './TouchButton';
 import sizes from '../constants/Layout';
-import {searchTickets, setTicketToUnused} from '../units/asyncFuncs';
+import { searchTickets, setTicketToUnused } from '../units/asyncFuncs';
 import { findByTextInStor } from '../units/localStorFuncs';
 
 const SearchPanel = ({ setSearchedTickets }) => {
@@ -11,33 +11,20 @@ const SearchPanel = ({ setSearchedTickets }) => {
 
   const onReset = async () => {
     const res = await setTicketToUnused();
-    Alert.alert(`Result ${res}`)
+    Alert.alert(`Result ${res}`);
   };
 
   const onSubmit = async () => {
     onChangeText('');
     Keyboard.dismiss();
-    let tickets = await searchTickets(text);
-    if (!tickets.err && tickets.data && Array.isArray(tickets.data) && tickets.data.length)
-      return setSearchedTickets(tickets.data);
-
-    if (!tickets.err && tickets.data?.length === 0) console.log(' Билеты в удаленной БД не найдены.');
-    if (tickets.err) {
-      console.warn('Ош. поиска в удаленной базе данных. Подключитесь к интернету', tickets.err);
-      console.log('поиск в локальном сторе...');
-      tickets = await findByTextInStor(text); //  поиск в локал стор, если ошибка поиска в удаленной базе
-      if (!tickets.err && tickets.data && Array.isArray(tickets.data) && tickets.data.length)
-        return setSearchedTickets(tickets.data);
-      if (tickets.err)
-        console.warn('Ош. поиска в локальной базе данных.', tickets.err);
-    }
-
-    if (!tickets.data) {
+    const tickets = await searchTickets(text);
+    console.log('SearchPanel tickets searched:', tickets.data.length);
+    if (tickets.err) return Alert.alert('Ошибка поиска билетов:', tickets.err);
+    if (tickets.data.length === 0) {
       Alert.alert('Билеты не найдены');
-      return setSearchedTickets([]);
+      console.log('Билеты не найдены');
     }
-
-    if (tickets.err) return Alert.alert(`Ошибка поиска ${tickets.err}`);
+    setSearchedTickets(tickets.data);
   };
 
   return (

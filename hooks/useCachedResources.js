@@ -15,8 +15,8 @@ export default function useCachedResources(setStatusHandler, setTicketsHandler) 
       SplashScreen.preventAutoHideAsync();
 
       // fetch data
-      // await AsyncStorage.removeItem("tickets");
-      // await AsyncStorage.removeItem("unsynctickets");
+      await AsyncStorage.removeItem("tickets");
+      await AsyncStorage.removeItem("unsynctickets");
       const syncRes = await syncTickets(); // синхронизация билетов, погашенных в оффлайне
       console.log(syncRes);
       const res = await getAllTickets(); //todo как загружать билеты только на текущее мероприятие?
