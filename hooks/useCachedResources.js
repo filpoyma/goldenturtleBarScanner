@@ -25,8 +25,6 @@ export default function useCachedResources(setStatusHandler, setTicketsHandler) 
       if (!res.err && Array.isArray(res.data)) {
         console.log('\x1b[36m%s\x1b[0m', 'ONLINE DATA');
         await AsyncStorage.setItem(localDb.tickets, JSON.stringify(res.data));
-      // await AsyncStorage.removeItem("tickets");
-      // await AsyncStorage.removeItem("unsynctickets");
         setTicketsHandler(res.data);
         setStatusHandler({
           err: null,

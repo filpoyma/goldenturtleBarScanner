@@ -29,7 +29,7 @@ export default function BarCodeScanScreen({ route, navigation }) {
     type: TICKETS.greetings,
     data: {}
   });
-  const { status, setStatusHandler, isTorch, tickets, setTicketsHandler } = React.useContext(Context);
+  const { netStatus, setStatusHandler, isTorch, tickets, setTicketsHandler } = React.useContext(Context);
   const isFocused = useIsFocused();
 
   useEffect(() => {
@@ -52,7 +52,7 @@ export default function BarCodeScanScreen({ route, navigation }) {
       setScanned(true);
 
       console.log('Поиск билетов...');
-      ticket = await getTicket(id);
+      ticket = await getTicket(id, netStatus);
       if (!ticket.err && ticket.data) {
         //  билет найден
         console.log('BarCodeScanScreen билет найден:', ticket.data.id);

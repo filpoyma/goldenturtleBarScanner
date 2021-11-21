@@ -20,7 +20,6 @@ it('getTicketById', async () => {
 it('getAllTickets', async () => {
   // jest.setTimeout(15000);
   expect(await getAllTickets()).toEqual(expect.anything());
-
 }, 20000);
 
 // it('syncTickets', async () => {

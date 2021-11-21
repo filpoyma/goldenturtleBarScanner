@@ -7,6 +7,7 @@ import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
 import Context from './context';
 import { onlineStatus } from './units/asyncFuncs';
+import {Alert} from 'react-native'
 /**
  * @return component
  */
@@ -19,7 +20,7 @@ import { onlineStatus } from './units/asyncFuncs';
 // todo переделать на ts
 
 export default function App() {
-  const [status, setStatus] = React.useState({ err: null, isOnline: false });
+  const [netStatus, setStatus] = React.useState({ err: null, isOnline: false });
   const [tickets, setTickets] = React.useState([]);
   const [isTorch, setTorch] = React.useState(false);
   const setStatusHandler = (data) => {
@@ -36,7 +37,6 @@ export default function App() {
 
   const netStat = async () => {
     const status = await onlineStatus();
-    console.log('Res Stat', status);
     setStatus((prevStat) => {
       if(prevStat.isOnline === status.data) return prevStat;
       return {err: status.err, isOnline: status.data}
@@ -46,7 +46,7 @@ export default function App() {
   React.useEffect(() => {
     const id = setInterval(() => {
       netStat();
-    }, 4000);
+    }, 5000);
     return () => {
       clearInterval(id);
     };
@@ -54,14 +54,14 @@ export default function App() {
 
   const isLoadingComplete = useCachedResources(setStatusHandler, setTicketsHandler);
 
-  // Alert.alert(`'App RENDERED isOnline:', ${JSON.stringify(status)}`);
+  // Alert.alert(`'App RENDERED isOnline:', ${JSON.stringify(netStatus)}`);
   if (!isLoadingComplete) {
     return null;
   } else {
     return (
       <SafeAreaProvider>
         <Context.Provider
-          value={{ status, setStatusHandler, isTorch, setTorchHandler, tickets, setTicketsHandler }}
+          value={{ netStatus, setStatusHandler, isTorch, setTorchHandler, tickets, setTicketsHandler }}
         >
           <Navigation colorScheme={colorScheme} />
         </Context.Provider>

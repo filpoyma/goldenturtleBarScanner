@@ -1,23 +1,32 @@
 import React from 'react';
 import { View, StyleSheet, TextInput, Keyboard, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import TouchebleButton from './TouchButton';
 import sizes from '../constants/Layout';
 import { searchTickets, setTicketToUnused } from '../units/asyncFuncs';
-import { findByTextInStor } from '../units/localStorFuncs';
+import Context from "../context";
+
 
 const SearchPanel = ({ setSearchedTickets }) => {
   const [text, onChangeText] = React.useState('');
+  const { netStatus } = React.useContext(Context);
+
 
   const onReset = async () => {
     const res = await setTicketToUnused();
     Alert.alert(`Result ${res}`);
   };
 
+  const onClearLocal = async () => {
+  await AsyncStorage.removeItem("tickets");
+  await AsyncStorage.removeItem("unsynctickets");
+  }
+
   const onSubmit = async () => {
     onChangeText('');
     Keyboard.dismiss();
-    const tickets = await searchTickets(text);
+    const tickets = await searchTickets(text, netStatus);
     console.log('SearchPanel tickets searched:', tickets.data.length);
     if (tickets.err) return Alert.alert('Ошибка поиска билетов:', tickets.err);
     if (tickets.data.length === 0) {
@@ -42,7 +51,9 @@ const SearchPanel = ({ setSearchedTickets }) => {
         // onFocus={() => onChangeText('')}
       />
       <TouchebleButton onPress={onSubmit}>НАЙТИ</TouchebleButton>
-      <TouchebleButton onPress={onReset}>RESET</TouchebleButton>
+      <TouchebleButton onPress={onReset}>setToUnused</TouchebleButton>
+      <TouchebleButton onPress={onClearLocal}>clearLocalTicket</TouchebleButton>
+
     </View>
   );
 };
