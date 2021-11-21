@@ -46,17 +46,17 @@ export default function BarCodeScanScreen({ route, navigation }) {
     })();
   }, []);
 
-  const handleBarCodeScanned = async ({ type, data }) => {
+  const handleBarCodeScanned = async ({ type, data: id }) => {
     let ticket = {};
-    const id = 300;
+    console.log('typeof', typeof id);
     if (!scanned || route.params?.id) {
       route.params = undefined;
       setScanned(true);
 
       console.log('Поиск билетов...');
+
       ticket = await getTicket(id, netStatus);
-      Alert.alert(JSON.stringify(ticket));
-      return;
+      // Alert.alert(JSON.stringify(ticket));
       if (!ticket.err && !isObjEmpty(ticket.data)) {
         //  билет найден
         console.log('BarCodeScanScreen билет найден:', ticket.data.id);

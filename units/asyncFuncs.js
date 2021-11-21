@@ -36,11 +36,11 @@ export const getTicket = async (id, netStatus) => {
       return { err: null, data: ticket.data }; // билет найден в удаленной базе (или {} если не найден) и нет ош
     }
   }
-  Alert.alert('Поиск в локальной БД by id', id);
+  Alert.alert(`Поиск в локальной БД by id ${id}`);
   const localTicket = await findByIdInStor(id); // поиск в локальной бд, если в удаленной поиск с ош
   if (localTicket.err && ticket.err) return { err: `${localTicket.err} ${ticket.err}`, data: {}};
     console.log('asyncFuncs билет найден в локальной БД:');
-    return { err: null, data: localTicket.data }; //  билет найден в  локальной базе (или {} если не найден)
+    return localTicket; //  билет найден в  локальной базе (или {} если не найден)
 
 };
 

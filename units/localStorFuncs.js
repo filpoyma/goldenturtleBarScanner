@@ -23,7 +23,6 @@ export const updateTicketToStor = (tickets, ticket) => {
 
 
 export const findByIdInStor = async (id) => {
-  return {data: {}, err: null};
   const tickets = await getTicketsArrFromStor(localDb.tickets);
   const ticket = tickets.filter((el) => el.id === id);
   if (ticket.length === 0) return {data: {}, err: null};
