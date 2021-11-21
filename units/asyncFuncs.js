@@ -32,19 +32,16 @@ export const getTicket = async (id, netStatus) => {
   if (netStatus.isOnline) {
     await syncTickets(); // синхронизируем билеты, погашенные оффлайн
     ticket = await getTicketById(id); // сначало ищем в удаленной бд
-    if (!ticket.err && !isObjEmpty(ticket?.data)) {
-      console.log('asyncFuncs билет найден в удаленной базе:');
-      return { err: null, data: ticket.data, isOnline: true }; // билет найден в удаленной базе
+    if (!ticket.err && (typeof(ticket?.data) === 'object')) {
+      return { err: null, data: ticket.data }; // билет найден в удаленной базе (или {} если не найден) и нет ош
     }
   }
-  Alert.alert('Поиск в локальной БД by id')
-  const localTicket = await findByIdInStor(id); // потом в локальной бд
-  if (localTicket?.data) {
+  Alert.alert('Поиск в локальной БД by id', id);
+  const localTicket = await findByIdInStor(id); // поиск в локальной бд, если в удаленной поиск с ош
+  if (localTicket.err && ticket.err) return { err: `${localTicket.err} ${ticket.err}`, data: {}};
     console.log('asyncFuncs билет найден в локальной БД:');
-    return { err: null, data: localTicket.data }; //  билет найден в  локальной базе
-  }
-  if (ticket.err) return { err: ticket.err, data: null};
-  return { err: 'not found', data: null };
+    return { err: null, data: localTicket.data }; //  билет найден в  локальной базе (или {} если не найден)
+
 };
 
 export const searchTickets = async (text, netStatus) => {
