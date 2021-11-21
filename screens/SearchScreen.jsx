@@ -32,7 +32,7 @@ export default function SearchScreen({ route, navigation }) {
     if(ticket.used == '1') return;
     Alert.alert(
       'Выбор билета!',
-      'Нажимая на кнопку OK подтверждаете билет. Эта операция невозвратная!',
+      'Нажимая на кнопку OK, Вы подтверждаете билет. Эта операция невозвратная!',
       [{ text: 'OK', onPress: () => {onChoiceTicket(ticket.id)} }, { text: 'Cancel' }],
       { cancelable: false }
     );

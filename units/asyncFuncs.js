@@ -1,11 +1,12 @@
 import { BASEURL, KEY } from '../constants/urls';
 import { isObjEmpty } from './checkFincs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Alert } from 'react-native';
 
 import { findByIdInStor, findByTextInStor, getTicketsArrFromStor } from './localStorFuncs';
 import { localDb } from '../constants/tiketsNames';
 import { Http } from './http';
+
+export const onlineStatus = () => (Http.getStatus(`${BASEURL}/qrapp`));
 
 export const getAllTickets = () => Http.get(`${BASEURL}/qrapp?id=all&key=${KEY}`);
 
