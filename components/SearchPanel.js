@@ -2,15 +2,15 @@ import React from 'react';
 import { View, StyleSheet, TextInput, Keyboard, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import TouchebleButton from './TouchButton';
+import TouchebleButton from './Buttons/TouchButton';
 import sizes from '../constants/Layout';
 import { searchTickets, setTicketToUnused } from '../units/asyncFuncs';
 import Context from '../context';
-import ImgButton from "./ImgButton";
+import ImgButton from "./Buttons/ImgButton";
 
 const SearchPanel = ({ setSearchedTickets }) => {
   const [text, onChangeText] = React.useState('');
-  const { netStatus } = React.useContext(Context);
+  const { netStatus, setLoading } = React.useContext(Context);
 
   const onReset = async () => {
     const res = await setTicketToUnused();
@@ -26,7 +26,9 @@ const SearchPanel = ({ setSearchedTickets }) => {
     if (text.length < 3) return Alert.alert('Ой', 'Введите минимум 3 символа');
     onChangeText('');
     Keyboard.dismiss();
+    setLoading(true);
     const tickets = await searchTickets(text, netStatus);
+    setLoading(false);
     console.log('SearchPanel tickets searched:', tickets.data.length);
     if (tickets.err) return Alert.alert('Ошибка поиска билетов:', tickets.err);
     if (tickets.data.length === 0) Alert.alert('Билеты не найдены');

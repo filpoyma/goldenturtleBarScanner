@@ -23,6 +23,7 @@ export default function App() {
   const [netStatus, setStatus] = React.useState({ err: null, isOnline: true });
   const [tickets, setTickets] = React.useState([]);
   const [isTorch, setTorch] = React.useState(false);
+  const [isLoading, setLoading] = React.useState(false);
   const setStatusHandler = (data) => {
     setStatus(data);
   };
@@ -60,7 +61,7 @@ export default function App() {
     return (
       <SafeAreaProvider>
         <Context.Provider
-          value={{ netStatus, setStatusHandler, isTorch, setTorchHandler, tickets, setTicketsHandler }}
+          value={{ netStatus, setStatusHandler, isTorch, setTorchHandler, tickets, setTicketsHandler, isLoading, setLoading }}
         >
           <Navigation colorScheme={colorScheme} />
         </Context.Provider>

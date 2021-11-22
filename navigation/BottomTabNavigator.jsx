@@ -9,7 +9,7 @@ import { Image, TouchableOpacity } from 'react-native';
 // import useColorScheme from "../hooks/useColorScheme";
 import BarCodeScanScreen from '../screens/BarCodeScanScreen';
 import AboutScreen from '../screens/AboutScreen';
-import ButtonTab from '../components/ButtonTab';
+import ButtonTab from '../components/Buttons/ButtonTab';
 import Null from '../components/Null';
 import Context from '../context';
 import SearchScreen from '../screens/SearchScreen';

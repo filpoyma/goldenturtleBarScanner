@@ -1,12 +1,14 @@
 import React from 'react';
+import { ActivityIndicator, StyleSheet, Image } from 'react-native';
 import { Text, View } from './Themed';
-import { StyleSheet, Image } from 'react-native';
 import sizes from '../constants/Layout';
 import TICKETS from '../constants/tiketsNames';
 import dayjs from 'dayjs';
 import { Colors } from '../constants/Colors';
+import Context from '../context';
 
 const ScannedResult = ({ ticketType = {}, ticketData = {} }) => {
+  let { isLoading } = React.useContext(Context);
   if (ticketType.name === TICKETS.notFound.name || ticketType.name === TICKETS.greetings.name)
     return (
       <View style={styles.container(ticketType.color)}>
@@ -14,7 +16,12 @@ const ScannedResult = ({ ticketType = {}, ticketData = {} }) => {
           <Text style={styles.text2ln}>{ticketType.name}</Text>
         </View>
         <View style={styles.image}>
-          <Image style={styles.tinyLogo} source={ticketType.img} />
+          {isLoading
+            ?
+            <ActivityIndicator size="large" color={Colors.white} />
+            :
+            <Image style={styles.tinyLogo} source={ticketType.img} />
+          }
         </View>
         <View style={styles.textRight}>
           <Text style={styles.text2ln}>{ticketType.additional || ticketType.name}</Text>
@@ -22,14 +29,25 @@ const ScannedResult = ({ ticketType = {}, ticketData = {} }) => {
       </View>
     );
 
-  if (ticketType.name === TICKETS.searchResults.name) //  для экрана поиска с input
+  if (ticketType.name === TICKETS.searchResults.name)
+    //  для экрана поиска с input
     return (
       <View style={styles.container(ticketType.color)}>
         <View style={styles.textLeftSearch}>
           <Text style={styles.text2ln}>{ticketType.name}</Text>
         </View>
+        <View style={styles.image}>
+          {isLoading
+            ?
+            <ActivityIndicator size="large" color={Colors.white} />
+            :
+            <Image style={styles.tinyLogo} source={ticketType.img} />
+          }
+        </View>
         <View style={styles.textRight}>
-          <Text style={styles.text2ln}>{ticketType.additional}: {ticketData.searched || 0}</Text>
+          <Text style={styles.text2ln}>
+            {ticketType.additional}: {ticketData.searched || 0}
+          </Text>
         </View>
       </View>
     );
@@ -42,7 +60,12 @@ const ScannedResult = ({ ticketType = {}, ticketData = {} }) => {
         <Text style={styles.text3ln}>{dayjs(ticketData.date).format('DD-MM-YYYY hh:mm')}</Text>
       </View>
       <View style={styles.image}>
-        <Image style={styles.tinyLogo} source={ticketType.img} />
+        {isLoading
+          ?
+          <ActivityIndicator size="large" color={Colors.white} />
+          :
+          <Image style={styles.tinyLogo} source={ticketType.img} />
+        }
       </View>
       <View style={styles.textRight}>
         <Text style={styles.text1ln}>{ticketData.name?.toUpperCase()}</Text>
@@ -63,7 +86,7 @@ const styles = StyleSheet.create({
     width: sizes.window.finderWidth,
     height: 67,
     backgroundColor: backgroundColor,
-    zIndex: 10,
+    zIndex: 10
   }),
   textLeft: {
     paddingTop: 5,
@@ -76,7 +99,7 @@ const styles = StyleSheet.create({
     paddingTop: 5,
     alignItems: 'flex-start',
     justifyContent: 'center',
-    backgroundColor: 'transparent',
+    backgroundColor: 'transparent'
   },
   textRight: {
     paddingTop: 5,
@@ -90,7 +113,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 14,
     textAlignVertical: 'center',
-    color: Colors.white,
+    color: Colors.white
   },
   text2ln: {
     fontFamily: 'FuturaMedium',
