@@ -7,7 +7,7 @@ import sizes from '../constants/Layout';
 const ButtonTab = (props) => {
   return (
     <View style={{ ...styles.button, ...props.style }}>
-      <Text style={styles.buttonText}>{props.children}</Text>
+      <Text style={{...styles.buttonText, ...props.style.text}}>{props.children}</Text>
     </View>
   );
 };

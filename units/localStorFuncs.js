@@ -1,7 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { isObjEmpty } from "./checkFincs";
 import { localDb } from "../constants/tiketsNames";
-import { Alert } from 'react-native';
 
 export const getTicketsArrFromStor = async (type) => {
   let tickets = await AsyncStorage.getItem(type);
@@ -16,7 +15,6 @@ export const updateTicketToStor = (tickets, ticket) => {
     else return el;
   });
   AsyncStorage.setItem("tickets", JSON.stringify(updatedTickets)).then(() => {
-    console.log("билет %s обновлен в LocalStor", ticket.data.id);
   });
   return updatedTickets;
 };
@@ -33,8 +31,6 @@ export const findByIdInStor = async (id) => {
 export const findByTextInStor = async (text) => {
   if(!text) return { data: [], err: null };
   const tickets = await getTicketsArrFromStor(localDb.tickets) || [];
-  console.log('localStorTicketsLength', tickets.length);
-
   const re = new RegExp(text, 'i');
   const findedTickets = tickets.filter((el) => re.test(el.email) || re.test(el.name));
   console.log('билеты найденs в asyncLocalStor - ', findedTickets.length);

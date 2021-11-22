@@ -5,13 +5,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import TouchebleButton from './TouchButton';
 import sizes from '../constants/Layout';
 import { searchTickets, setTicketToUnused } from '../units/asyncFuncs';
-import Context from "../context";
-
+import Context from '../context';
+import ImgButton from "./ImgButton";
 
 const SearchPanel = ({ setSearchedTickets }) => {
   const [text, onChangeText] = React.useState('');
   const { netStatus } = React.useContext(Context);
-
 
   const onReset = async () => {
     const res = await setTicketToUnused();
@@ -19,41 +18,42 @@ const SearchPanel = ({ setSearchedTickets }) => {
   };
 
   const onClearLocal = async () => {
-  await AsyncStorage.removeItem("tickets");
-  await AsyncStorage.removeItem("unsynctickets");
-  }
+    await AsyncStorage.removeItem('tickets');
+    await AsyncStorage.removeItem('unsynctickets');
+  };
 
   const onSubmit = async () => {
+    if (text.length < 3) return Alert.alert('Ой', 'Введите минимум 3 символа');
     onChangeText('');
     Keyboard.dismiss();
     const tickets = await searchTickets(text, netStatus);
     console.log('SearchPanel tickets searched:', tickets.data.length);
     if (tickets.err) return Alert.alert('Ошибка поиска билетов:', tickets.err);
-    if (tickets.data.length === 0) {
-      Alert.alert('Билеты не найдены');
-      console.log('Билеты не найдены');
-    }
+    if (tickets.data.length === 0) Alert.alert('Билеты не найдены');
     setSearchedTickets(tickets.data);
   };
 
   return (
     <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        type={'text'}
-        placeholder="номер билета или эл.адрес..."
-        onChangeText={onChangeText}
-        value={text}
-        onSubmitEditing={onSubmit}
-        autoCapitalize={'none'}
-        autoComplete={'off'}
-        autoCorrect={false}
-        // onFocus={() => onChangeText('')}
-      />
-      <TouchebleButton onPress={onSubmit}>НАЙТИ</TouchebleButton>
-      <TouchebleButton onPress={onReset}>setToUnused</TouchebleButton>
-      <TouchebleButton onPress={onClearLocal}>clearLocalTicket</TouchebleButton>
-
+      <View>
+        <TextInput
+          style={styles.input}
+          type={'text'}
+          placeholder="имя или эл.адрес"
+          onChangeText={onChangeText}
+          value={text}
+          onSubmitEditing={onSubmit}
+          autoCapitalize={'none'}
+          autoComplete={'off'}
+          autoCorrect={false}
+          // onFocus={() => onChangeText('')}
+        />
+        <View style={styles.searchBtn}>
+          <ImgButton imgSrc={require('../assets/images/search.png')} onPress={onSubmit}/>
+        </View>
+      </View>
+      <TouchebleButton onPress={onReset} style={{borderColor: 'white'}}>setAllTickToUnused</TouchebleButton>
+      {/*<TouchebleButton onPress={onClearLocal}>clearLocalTicket</TouchebleButton>*/}
     </View>
   );
 };
@@ -65,14 +65,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'transparent',
     zIndex: 1,
-    borderColor: '#ff9792',
-    borderWidth: 1
   },
   input: {
     height: 55,
     width: sizes.window.finderWidth - 15,
     margin: 12,
-    borderWidth: 2,
+    borderWidth: 1,
     paddingVertical: 18,
     paddingHorizontal: 25,
     borderRadius: 30,
@@ -81,6 +79,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     fontFamily: 'FuturaExtraBold',
     fontSize: 16
+  },
+  searchBtn: {
+    position: 'absolute',
+    top: 8,
+    right: 8
   }
 });
 

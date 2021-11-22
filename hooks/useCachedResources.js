@@ -15,13 +15,9 @@ export default function useCachedResources(setStatusHandler, setTicketsHandler) 
   React.useEffect(() => {
     async function loadResourcesAndDataAsync() {
       SplashScreen.preventAutoHideAsync();
-      Alert.alert('useCachedResources MOUNT')
       // fetch data
-      const syncRes = await syncTickets(); // синхронизация билетов, погашенных в оффлайне
-      console.log(syncRes);
+      await syncTickets(); // синхронизация билетов, погашенных в оффлайне;
       const res = await getAllTickets(); //todo как загружать билеты только на текущее мероприятие?
-      // console.log('res.data', res.data);
-      // console.log('res. error', res.error);
       if (!res.err && Array.isArray(res.data)) {
         console.log('\x1b[36m%s\x1b[0m', 'ONLINE DATA');
         await AsyncStorage.setItem(localDb.tickets, JSON.stringify(res.data));

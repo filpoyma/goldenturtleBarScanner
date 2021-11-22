@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { useIsFocused } from '@react-navigation/native';
-import { Button, StyleSheet, Alert } from 'react-native';
+import { StyleSheet, Alert } from 'react-native';
 import { Text, View } from '../components/Themed';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import BarcodeMask from 'react-native-barcode-mask';
@@ -16,20 +16,23 @@ import TICKETS from '../constants/tiketsNames';
 import SearchPanel from '../components/SearchPanel';
 import { getTicket, syncTickets, updateTicket } from '../units/asyncFuncs';
 import { addUnSyncTicketToStor, getVisited, updateTicketToStor } from '../units/localStorFuncs';
-import { getTicketType, ticketDataConverter } from '../units/convertFuncs';
-import {isObjEmpty} from "../units/checkFincs";
+import { getTicketType } from '../units/convertFuncs';
+import { isObjEmpty } from '../units/checkFincs';
+import TouchebleButton from '../components/TouchButton';
+import { Colors } from '../constants/Colors';
 
 const type = Camera.Constants.Type.back;
 const torchOff = Camera.Constants.FlashMode.off;
 const torchOn = Camera.Constants.FlashMode.torch;
+const welcomeTicket = {
+  type: TICKETS.greetings,
+  data: {}
+};
 
 export default function BarCodeScanScreen({ route, navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
-  const [ticket, setTicket] = React.useState({
-    type: TICKETS.greetings,
-    data: {}
-  });
+  const [ticket, setTicket] = React.useState(welcomeTicket);
   const { netStatus, setStatusHandler, isTorch, tickets, setTicketsHandler } = React.useContext(Context);
   const isFocused = useIsFocused();
 
@@ -37,6 +40,7 @@ export default function BarCodeScanScreen({ route, navigation }) {
     if (route.params && route.params.id) {
       handleBarCodeScanned({ data: route.params.id });
     }
+    setTicket(welcomeTicket);
   }, [isFocused]);
 
   useEffect(() => {
@@ -48,21 +52,13 @@ export default function BarCodeScanScreen({ route, navigation }) {
 
   const handleBarCodeScanned = async ({ type, data: id }) => {
     let ticket = {};
-    console.log('typeof', typeof id);
     if (!scanned || route.params?.id) {
       route.params = undefined;
       setScanned(true);
-
-      console.log('Поиск билетов...');
-
       ticket = await getTicket(id, netStatus);
-      // Alert.alert(JSON.stringify(ticket));
       if (!ticket.err && !isObjEmpty(ticket.data)) {
         //  билет найден
-        console.log('BarCodeScanScreen билет найден:', ticket.data.id);
-
         // ticket = ticketDataConverter(ticket);
-
         setTicket({
           type: getTicketType(ticket),
           data: ticket.data
@@ -76,7 +72,6 @@ export default function BarCodeScanScreen({ route, navigation }) {
 
         if (!updateStat.err && updateStat.data?.status === 'ok') {
           // билет "погашен" в удаленной базе
-          console.log('билет "погашен" в удаленной базе, status', updateStat.data?.status);
           setStatusHandler({
             err: null,
             isOnline: true
@@ -84,7 +79,6 @@ export default function BarCodeScanScreen({ route, navigation }) {
         } else {
           //  'билет не удалось записать в удаленную БД'
           console.warn('ош записи в удаленную бд', updateStat.err);
-          console.log('BarCodeScanScreen stat.data:', updateStat.data);
           console.log('билет не удалось записать в удаленную БД... записываем билет в локалСтор');
           ticket.data.used = '1';
           await addUnSyncTicketToStor(ticket); // записываем билет в локалСтор несинхронизированных билетов
@@ -102,10 +96,8 @@ export default function BarCodeScanScreen({ route, navigation }) {
         });
       }
       if (ticket.err && isObjEmpty(ticket.data))
-      Alert.alert(`билет не найден из за ошибке на сервере ${ticket.err}`);
-
-      const resSync = await syncTickets(); //  синхронизация unsyncTickets  с удаленной БД
-      console.log(resSync);
+        Alert.alert(`билет не найден из за ошибке на сервере ${ticket.err}`);
+      await syncTickets(); //  синхронизация unsyncTickets  с удаленной БД
     }
   };
 
@@ -149,7 +141,16 @@ export default function BarCodeScanScreen({ route, navigation }) {
             />
             {scanned && (
               <View style={styles.button}>
-                <Button title="Scan Again" onPress={() => setScanned(false)} />
+                <TouchebleButton
+                  style={{
+                    borderColor: 'white',
+                    borderWidth: 1,
+                    text: { color: Colors.white, fontFamily: 'FuturaBook' }
+                  }}
+                  onPress={() => setScanned(false)}
+                >
+                  СЛЕДУЮЩИЙ
+                </TouchebleButton>
               </View>
             )}
           </Camera>

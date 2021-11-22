@@ -1,11 +1,9 @@
 import { BASEURL, KEY } from '../constants/urls';
-import { isObjEmpty } from './checkFincs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { findByIdInStor, findByTextInStor, getTicketsArrFromStor } from './localStorFuncs';
 import { localDb } from '../constants/tiketsNames';
 import { Http } from './http';
-import { Alert } from 'react-native';
 
 export const onlineStatus = () => Http.getStatus(`${BASEURL}/qrapp`);
 
@@ -36,7 +34,6 @@ export const getTicket = async (id, netStatus) => {
       return { err: null, data: ticket.data }; // билет найден в удаленной базе (или {} если не найден) и нет ош
     }
   }
-  Alert.alert(`Поиск в локальной БД by id ${id}`);
   const localTicket = await findByIdInStor(id); // поиск в локальной бд, если в удаленной поиск с ош
   if (localTicket.err && ticket.err) return { err: `${localTicket.err} ${ticket.err}`, data: {}};
     console.log('asyncFuncs билет найден в локальной БД:');
@@ -55,7 +52,6 @@ export const searchTickets = async (text, netStatus) => {
     }
   }
   if (tickets.err) {
-    Alert.alert('Поиск в локальной БД');
     console.warn('Ош. поиска в удаленной базе данных: %s. поиск в локальном сторе...', tickets.err);
     tickets = await findByTextInStor(text); //  поиск в локал стор, если ошибка поиска в удаленной базе
     if (tickets.err) console.warn('Ош. поиска в локальной базе данных.', tickets.err);
@@ -65,7 +61,6 @@ export const searchTickets = async (text, netStatus) => {
 
 export const syncTickets = async () => {
   const unsyncTickets = await getTicketsArrFromStor(localDb.unsyncTickets);
-  console.log('asyncFuncs unsyncTickets length:', unsyncTickets?.length);
   if (Array.isArray(unsyncTickets) && unsyncTickets.length !== 0) {
     const promises = unsyncTickets.map((ticket) => {
       return updateTicket({ data: ticket });

@@ -22,7 +22,7 @@ const ScannedResult = ({ ticketType = {}, ticketData = {} }) => {
       </View>
     );
 
-  if (ticketType.name === TICKETS.searchResults.name)
+  if (ticketType.name === TICKETS.searchResults.name) //  для экрана поиска с input
     return (
       <View style={styles.container(ticketType.color)}>
         <View style={styles.textLeftSearch}>
@@ -56,7 +56,7 @@ const ScannedResult = ({ ticketType = {}, ticketData = {} }) => {
 const styles = StyleSheet.create({
   container: (backgroundColor) => ({
     marginBottom: 12,
-    paddingHorizontal: 13,
+    paddingHorizontal: 12,
     paddingVertical: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -64,21 +64,22 @@ const styles = StyleSheet.create({
     height: 67,
     backgroundColor: backgroundColor,
     zIndex: 10,
-    borderColor: '#ff9792',
-    borderWidth: 1
   }),
   textLeft: {
+    paddingTop: 5,
     alignItems: 'flex-start',
     justifyContent: 'center',
     backgroundColor: 'transparent',
     width: (sizes.window.finderWidth - 90) / 2
   },
   textLeftSearch: {
+    paddingTop: 5,
     alignItems: 'flex-start',
     justifyContent: 'center',
     backgroundColor: 'transparent',
   },
   textRight: {
+    paddingTop: 5,
     alignItems: 'flex-end',
     justifyContent: 'center',
     backgroundColor: 'transparent',
@@ -86,17 +87,23 @@ const styles = StyleSheet.create({
   },
   text1ln: {
     fontFamily: 'FuturaMedium',
-    fontSize: 18,
-    color: Colors.white
+    fontSize: 14,
+    lineHeight: 14,
+    textAlignVertical: 'center',
+    color: Colors.white,
   },
   text2ln: {
     fontFamily: 'FuturaMedium',
-    fontSize: 22,
+    fontSize: 21,
+    lineHeight: 24,
+    textAlignVertical: 'center',
     color: Colors.white
   },
   text3ln: {
     fontFamily: 'FuturaMedium',
-    fontSize: 18,
+    fontSize: 14,
+    lineHeight: 14,
+    textAlignVertical: 'center',
     color: Colors.white
   },
   tinyLogo: {
