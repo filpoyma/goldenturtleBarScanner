@@ -18,7 +18,7 @@ import { getTicket, syncTickets, updateTicket } from '../units/asyncFuncs';
 import { addUnSyncTicketToStor, getVisited, updateTicketToStor } from '../units/localStorFuncs';
 import { getTicketType } from '../units/convertFuncs';
 import { isObjEmpty } from '../units/checkFincs';
-import TouchebleButton from '../components/TouchButton';
+import TouchebleButton from '../components/Buttons/TouchButton';
 import { Colors } from '../constants/Colors';
 
 const type = Camera.Constants.Type.back;
@@ -33,7 +33,7 @@ export default function BarCodeScanScreen({ route, navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [ticket, setTicket] = React.useState(welcomeTicket);
-  const { netStatus, setStatusHandler, isTorch, tickets, setTicketsHandler } = React.useContext(Context);
+  const { netStatus, setStatusHandler, isTorch, tickets, setTicketsHandler, setLoading } = React.useContext(Context);
   const isFocused = useIsFocused();
 
   useEffect(() => {
@@ -55,7 +55,9 @@ export default function BarCodeScanScreen({ route, navigation }) {
     if (!scanned || route.params?.id) {
       route.params = undefined;
       setScanned(true);
+      setLoading(true);
       ticket = await getTicket(id, netStatus);
+      setLoading(false);
       if (!ticket.err && !isObjEmpty(ticket.data)) {
         //  билет найден
         // ticket = ticketDataConverter(ticket);

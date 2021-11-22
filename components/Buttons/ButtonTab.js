@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-import { Colors } from '../constants/Colors';
-import sizes from '../constants/Layout';
+import { Colors } from '../../constants/Colors';
+import sizes from '../../constants/Layout';
 
 const ButtonTab = (props) => {
   return (
