@@ -1,19 +1,21 @@
-import React from "react";
+import React from 'react';
 // import {Ionicons} from "@expo/vector-icons";
-import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
-import {createStackNavigator} from "@react-navigation/stack";
 // import FAwesomeIcon from "react-native-vector-icons/FontAwesome5";
-import {Image, TouchableOpacity, View} from "react-native";
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
+import { Image, TouchableOpacity } from 'react-native';
 
 // import Colors from "../constants/Colors";
 // import useColorScheme from "../hooks/useColorScheme";
-import BarCodeScanScreen from "../screens/BarCodeScanScreen";
-import AboutScreen from "../screens/AboutScreen";
-import ButtonTab from "../components/ButtonTab";
-import Null from "../components/Null"
-import Context from "../context";
-import SearchScreen from "../screens/SearchScreen";
-
+import BarCodeScanScreen from '../screens/BarCodeScanScreen';
+import AboutScreen from '../screens/AboutScreen';
+import ButtonTab from '../components/ButtonTab';
+import Null from '../components/Null';
+import Context from '../context';
+import SearchScreen from '../screens/SearchScreen';
+import { Text } from '../components/Themed';
+import { Colors } from '../constants/Colors';
+import LogoTitle from "../components/LogoTitle";
 
 const BottomTab = createBottomTabNavigator();
 
@@ -27,32 +29,32 @@ export default function BottomTabNavigator() {
         name="BarCodeScan"
         component={BarCodeScanNavigator}
         options={{
-          title: "",
+          title: '',
           headerShown: false,
           tabBarShowLabel: false,
-          tabBarActiveTintColor: "#2f95dc",
+          tabBarActiveTintColor: '#2f95dc',
           backgroundColor: '#f7f7f7',
           tabBarHideOnKeyboard: true,
 
-
-          tabBarIcon: ({color}) => (
-            <Image source={require('../assets/images/search.png')}
-                          style={{
-                            width: 60,
-                            height: 60,
-                            opacity: color === "#2f95dc" ? 1 : 0.7
-                          }}
+          tabBarIcon: ({ color }) => (
+            <Image
+              source={require('../assets/images/search.png')}
+              style={{
+                width: 60,
+                height: 60,
+                opacity: color === '#2f95dc' ? 1 : 0.7
+              }}
             />
           ),
           tabBarStyle: [
             {
-              display: "flex",
+              display: 'flex',
               height: 95,
               elevation: 0,
-              borderTopWidth: 0,
+              borderTopWidth: 0
             },
-            null,
-          ],
+            null
+          ]
         }}
       />
       <BottomTab.Screen
@@ -60,46 +62,46 @@ export default function BottomTabNavigator() {
         component={SearchNavigator}
         params={'123'}
         options={{
-          title: "",
+          title: '',
           headerShown: false,
           tabBarShowLabel: false,
-          tabBarActiveTintColor: "#2f95dc",
+          tabBarActiveTintColor: '#2f95dc',
           tabBarHideOnKeyboard: true,
-          tabBarIcon: ({color}) => (
-            <ButtonTab style={{opacity: color === "#2f95dc" ? 1 : 0.5}}>
-                 ПОИСК
-            </ButtonTab>
+          tabBarIcon: ({ color }) => (
+            <ButtonTab style={{ opacity: color === '#2f95dc' ? 1 : 0.5 }}>ПОИСК</ButtonTab>
           ),
           tabBarStyle: [
             {
-              display: "flex",
+              display: 'flex',
               height: 95,
               elevation: 0,
-              borderTopWidth: 0,
+              borderTopWidth: 0
             },
-            null,
-          ],
+            null
+          ]
         }}
       />
-      <BottomTab.Screen name="Settings"
-                        component={Null}
-                        options={({navigation}) => ({
-                          title: "",
-                          tabBarShowLabel: false,
-                          tabBarHideOnKeyboard: true,
-                          tabBarButton: props => <TouchableOpacity {...props} onPress={setTorchHandler}/>,
-                          tabBarIcon: ({color}) => (
-                            <Image source={require('../assets/images/torch.png')}
-                                   style={{
-                                     width: 60,
-                                     height: 60,
-                                     opacity: isTorch ? 1 : 0.7
-                                   }}
-                            /> )
-                        })
-                        }/>
+      <BottomTab.Screen
+        name="Settings"
+        component={Null}
+        options={({ navigation }) => ({
+          title: '',
+          tabBarShowLabel: false,
+          tabBarHideOnKeyboard: true,
+          tabBarButton: (props) => <TouchableOpacity {...props} onPress={setTorchHandler} />,
+          tabBarIcon: ({ color }) => (
+            <Image
+              source={require('../assets/images/torch.png')}
+              style={{
+                width: 60,
+                height: 60,
+                opacity: isTorch ? 1 : 0.7
+              }}
+            />
+          )
+        })}
+      />
     </BottomTab.Navigator>
-
   );
 }
 
@@ -119,7 +121,17 @@ function BarCodeScanNavigator() {
       <BarCodeScanStack.Screen
         name="BarCodeScanScreen"
         component={BarCodeScanScreen}
-        options={{headerTitle: "Scan QR Code"}}
+        options={{
+          // title: `ЗОЛОТАЯ ЧЕРЕПАХА ${currentYear}`,
+          headerTitle: () => <LogoTitle/>,
+          headerStyle: {
+            backgroundColor: Colors.primary
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold'
+          }
+        }}
       />
     </BarCodeScanStack.Navigator>
   );
@@ -133,7 +145,17 @@ function SearchNavigator() {
       <SearchStack.Screen
         name="SearchScreen"
         component={SearchScreen}
-        options={{headerTitle: "Search"}}
+        options={{
+          // title: `ЗОЛОТАЯ ЧЕРЕПАХА ${currentYear}`,
+          headerTitle: () => <LogoTitle/>,
+          headerStyle: {
+            backgroundColor: Colors.primary
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold'
+          }
+        }}
       />
     </SearchStack.Navigator>
   );
@@ -144,11 +166,7 @@ const AboutStack = createStackNavigator();
 function AboutNavigator() {
   return (
     <AboutStack.Navigator>
-      <AboutStack.Screen
-        name="AboutScreen"
-        component={AboutScreen}
-        options={{headerTitle: "About"}}
-      />
+      <AboutStack.Screen name="AboutScreen" component={AboutScreen} options={{ headerTitle: 'About' }} />
     </AboutStack.Navigator>
   );
 }

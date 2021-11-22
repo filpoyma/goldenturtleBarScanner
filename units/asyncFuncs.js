@@ -1,20 +1,18 @@
-import {BASEURL, KEY} from '../constants/urls';
-import { isObjEmpty } from './checkFincs';
+import { BASEURL, KEY } from '../constants/urls';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { findByIdInStor, getTicketsArrFromStor } from './localStorFuncs';
+import { findByIdInStor, findByTextInStor, getTicketsArrFromStor } from './localStorFuncs';
 import { localDb } from '../constants/tiketsNames';
 import { Http } from './http';
 
-export const getAllTickets = () =>
-  Http.get(`${BASEURL}/qrapp?id=all&key=${KEY}`);
+export const onlineStatus = () => Http.getStatus(`${BASEURL}/qrapp`);
 
-export const getTicketById = (id) =>
-   Http.get(`${BASEURL}/qrapp?id=${id}&key=${KEY}`);
+export const getAllTickets = () => Http.get(`${BASEURL}/qrapp?id=all&key=${KEY}`);
 
-export const searchTickets = async (text) => {
+export const getTicketById = (id) => Http.get(`${BASEURL}/qrapp?id=${id}&key=${KEY}`);
+
+export const searchTicketsInDb = async (text) => {
   if (!text) return { data: [], err: null };
-  await syncTickets();
   return Http.get(`${BASEURL}/qrapp?search&data=${text}&key=${KEY}`);
 };
 
@@ -27,27 +25,42 @@ export const updateTicket = (ticket) => {
   return Http.post(`${BASEURL}/qrapp`, data);
 };
 
-export const getTicket = async (id) => {
-  const resSync = await syncTickets(); // синхронизируем билеты, погашенные оффлайн
-  console.log('BarCodeScanScreen:', resSync);
-  let ticket = await getTicketById(id); // сначало ищем в удаленной бд
-  if (!ticket.err && !isObjEmpty(ticket?.data)) {
-    console.log('asyncFuncs билет найден в удаленной базе:');
-    return { err: null, data: ticket.data, isOnline: true }; // билет найден в удаленной базе
+export const getTicket = async (id, netStatus) => {
+  let ticket = { err: netStatus.err, data: null };
+  if (netStatus.isOnline) {
+    await syncTickets(); // синхронизируем билеты, погашенные оффлайн
+    ticket = await getTicketById(id); // сначало ищем в удаленной бд
+    if (!ticket.err && (typeof(ticket?.data) === 'object')) {
+      return { err: null, data: ticket.data }; // билет найден в удаленной базе (или {} если не найден) и нет ош
+    }
   }
-
-  const localTicket = await findByIdInStor(id); // потом в локальной бд
-  if (localTicket?.data) {
+  const localTicket = await findByIdInStor(id); // поиск в локальной бд, если в удаленной поиск с ош
+  if (localTicket.err && ticket.err) return { err: `${localTicket.err} ${ticket.err}`, data: {}};
     console.log('asyncFuncs билет найден в локальной БД:');
-    return { err: null, data: localTicket.data, isOnline: false }; //  билет найден в  локальной базе
+    return localTicket; //  билет найден в  локальной базе (или {} если не найден)
+
+};
+
+export const searchTickets = async (text, netStatus) => {
+  let tickets = { err: netStatus.err, data: null };
+  if (netStatus.isOnline) {
+    await syncTickets();
+    tickets = await searchTicketsInDb(text);
+    if (!tickets.err && tickets.data && Array.isArray(tickets.data)) {
+      if (!tickets.data.length) console.log(' Билеты в удаленной БД не найдены.');
+      return tickets;
+    }
   }
-  if (ticket.err) return { err: ticket.err, data: null, isOnline: false };
-  return { err: 'not found', data: null, isOnline: true };
+  if (tickets.err) {
+    console.warn('Ош. поиска в удаленной базе данных: %s. поиск в локальном сторе...', tickets.err);
+    tickets = await findByTextInStor(text); //  поиск в локал стор, если ошибка поиска в удаленной базе
+    if (tickets.err) console.warn('Ош. поиска в локальной базе данных.', tickets.err);
+    return tickets;
+  }
 };
 
 export const syncTickets = async () => {
   const unsyncTickets = await getTicketsArrFromStor(localDb.unsyncTickets);
-  console.log('asyncFuncs unsyncTickets length:', unsyncTickets?.length);
   if (Array.isArray(unsyncTickets) && unsyncTickets.length !== 0) {
     const promises = unsyncTickets.map((ticket) => {
       return updateTicket({ data: ticket });

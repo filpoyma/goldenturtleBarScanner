@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { useIsFocused } from '@react-navigation/native';
-import { Button, StyleSheet, Alert } from 'react-native';
+import { StyleSheet, Alert } from 'react-native';
 import { Text, View } from '../components/Themed';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import BarcodeMask from 'react-native-barcode-mask';
@@ -16,26 +16,31 @@ import TICKETS from '../constants/tiketsNames';
 import SearchPanel from '../components/SearchPanel';
 import { getTicket, syncTickets, updateTicket } from '../units/asyncFuncs';
 import { addUnSyncTicketToStor, getVisited, updateTicketToStor } from '../units/localStorFuncs';
-import { getTicketType, ticketDataConverter } from '../units/convertFuncs';
+import { getTicketType } from '../units/convertFuncs';
+import { isObjEmpty } from '../units/checkFincs';
+import TouchebleButton from '../components/TouchButton';
+import { Colors } from '../constants/Colors';
 
 const type = Camera.Constants.Type.back;
 const torchOff = Camera.Constants.FlashMode.off;
 const torchOn = Camera.Constants.FlashMode.torch;
+const welcomeTicket = {
+  type: TICKETS.greetings,
+  data: {}
+};
 
 export default function BarCodeScanScreen({ route, navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
-  const [ticket, setTicket] = React.useState({
-    type: TICKETS.greetings,
-    data: {}
-  });
-  const { status, setStatusHandler, isTorch, tickets, setTicketsHandler } = React.useContext(Context);
+  const [ticket, setTicket] = React.useState(welcomeTicket);
+  const { netStatus, setStatusHandler, isTorch, tickets, setTicketsHandler } = React.useContext(Context);
   const isFocused = useIsFocused();
 
   useEffect(() => {
     if (route.params && route.params.id) {
       handleBarCodeScanned({ data: route.params.id });
     }
+    setTicket(welcomeTicket);
   }, [isFocused]);
 
   useEffect(() => {
@@ -50,71 +55,49 @@ export default function BarCodeScanScreen({ route, navigation }) {
     if (!scanned || route.params?.id) {
       route.params = undefined;
       setScanned(true);
-
-      console.log('Поиск билетов...');
-      ticket = await getTicket(id);
-      if (!ticket.err && ticket.data) {
+      ticket = await getTicket(id, netStatus);
+      if (!ticket.err && !isObjEmpty(ticket.data)) {
         //  билет найден
-        console.log('BarCodeScanScreen билет найден:', ticket.data.id);
-
-        ticket = ticketDataConverter(ticket);
-
+        // ticket = ticketDataConverter(ticket);
         setTicket({
           type: getTicketType(ticket),
           data: ticket.data
         });
-        setStatusHandler({
-          err: null,
-          isOnline: ticket.isOnline
-        });
-        if (ticket.data.used === '1' || ticket.data.used === 1) console.log('билет уже использован');
         if (ticket.data.used === '1' || ticket.data.used === 1) return; // билет уже использован
 
         ticket.data.used = '1';
-        const stat = await updateTicket(ticket); //  запись использованного билета в удаленную бд
-        await updateTicketToStor(tickets, setTicketsHandler, ticket); //  запись использованного билета в локальную бд
+        const updateStat = await updateTicket(ticket); //  запись использованного билета в удаленную бд
+        const updatedTickets = await updateTicketToStor(tickets, ticket); //  запись использованного билета в локальную бд
+        setTicketsHandler(updatedTickets);
 
-        if (!stat.err && stat.data?.status === 'ok') {
+        if (!updateStat.err && updateStat.data?.status === 'ok') {
           // билет "погашен" в удаленной базе
-          console.log('билет "погашен" в удаленной базе, status', stat.data?.status);
           setStatusHandler({
             err: null,
             isOnline: true
           });
         } else {
           //  'билет не удалось записать в удаленную БД'
-          console.warn('ош записи в удаленную бд', stat.err)
-          console.log('BarCodeScanScreen stat.data:', stat.data);
+          console.warn('ош записи в удаленную бд', updateStat.err);
           console.log('билет не удалось записать в удаленную БД... записываем билет в локалСтор');
           ticket.data.used = '1';
           await addUnSyncTicketToStor(ticket); // записываем билет в локалСтор несинхронизированных билетов
 
           setStatusHandler({
-            err: stat.err,
+            err: updateStat.err,
             isOnline: false
           });
         }
       }
-      if (ticket.err) {
+      if (!ticket.err && isObjEmpty(ticket.data)) {
         setTicket({
-          type: getTicketType(),
+          type: getTicketType(), // отображение таблички, что билет не найден
           data: {}
         });
-        setStatusHandler({
-          err: ticket.err === 'not found' ? null : ticket.err,
-          isOnline: ticket.isOnline
-        });
-        ticket.err === 'not found'
-          ? Alert.alert('билет не найден')
-          : Alert.alert('билет не найден из за ошибке на сервере');
       }
-      const resSync = await syncTickets(); //  синхронизация unsyncTickets  с удаленной БД
-      console.log(resSync);
-
-      // Alert.alert(
-      //   "Bar code has been scanned!",
-      //   `Data: ${data}`
-      // );
+      if (ticket.err && isObjEmpty(ticket.data))
+        Alert.alert(`билет не найден из за ошибке на сервере ${ticket.err}`);
+      await syncTickets(); //  синхронизация unsyncTickets  с удаленной БД
     }
   };
 
@@ -158,7 +141,16 @@ export default function BarCodeScanScreen({ route, navigation }) {
             />
             {scanned && (
               <View style={styles.button}>
-                <Button title="Scan Again" onPress={() => setScanned(false)} />
+                <TouchebleButton
+                  style={{
+                    borderColor: 'white',
+                    borderWidth: 1,
+                    text: { color: Colors.white, fontFamily: 'FuturaBook' }
+                  }}
+                  onPress={() => setScanned(false)}
+                >
+                  СЛЕДУЮЩИЙ
+                </TouchebleButton>
               </View>
             )}
           </Camera>

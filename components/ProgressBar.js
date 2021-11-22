@@ -41,8 +41,6 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     marginVertical: 10,
-    borderColor: '#ff9792',
-    borderWidth: 1
   },
   progressBar: {
     marginBottom: 5
@@ -54,11 +52,12 @@ const styles = StyleSheet.create({
   },
   text1ln: {
     fontFamily: 'FuturaMedium',
-    fontSize: 14
+    fontSize: 13
   },
   text2ln: {
     fontFamily: 'FuturaMedium',
-    fontSize: 24
+    fontSize: 24,
+    lineHeight: 24,
   }
 });
 

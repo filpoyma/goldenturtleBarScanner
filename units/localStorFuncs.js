@@ -8,30 +8,24 @@ export const getTicketsArrFromStor = async (type) => {
   return JSON.parse(tickets);
 };
 
-export const updateTicketToStor = (tickets, setTickets, ticket) => {
+export const updateTicketToStor = (tickets, ticket) => {
 
   const updatedTickets = tickets.map((el) => {
     if (el.id === ticket.data.id) return {...el, used: ticket.data.used};
     else return el;
   });
   AsyncStorage.setItem("tickets", JSON.stringify(updatedTickets)).then(() => {
-    console.log("билет %s обновлен в LocalStor", ticket.data.id);
   });
-  setTickets(updatedTickets);
+  return updatedTickets;
 };
 
-// export const findByIdInStor = async (tickets, id) => {
-//   const ticket = tickets.filter((ticket) => ticket.data.id === id);
-//   if (ticket.length === 0) return null;
-//   return { data: ticket[0] };
-// };
 
 export const findByIdInStor = async (id) => {
   const tickets = await getTicketsArrFromStor(localDb.tickets);
   const ticket = tickets.filter((el) => el.id === id);
-  if (ticket.length === 0) return null;
+  if (ticket.length === 0) return {data: {}, err: null};
   console.log('билет найден в asyncLocalStor id:', id);
-  return {data: ticket[0]};
+  return {data: ticket[0], err: null};
 };
 
 export const findByTextInStor = async (text) => {

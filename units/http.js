@@ -12,6 +12,15 @@ export class Http {
     }
   }
 
+  static async getStatus(url) {
+    try {
+      return {data: await requestStatus(url), err: null};
+    } catch (err) {
+      console.warn(`GETStatus Error:`, err.message);
+      return { data: false, err: err.message };
+    }
+  }
+
   static async post(url, data) {
     try {
       return {data: await request(url, 'POST', data), err: null};
@@ -21,28 +30,17 @@ export class Http {
     }
   }
 
-  static async put(url, data) {
-    return await request(url, 'PUT', data).catch((error) => console.log(`PUT ${url} error - ${error}`));
-  }
-
-  static async patch(url, data) {
-    return await request(url, 'PATCH', data).catch((error) => console.log(`PATCH ${url} error - ${error}`));
-  }
-
-  static async delete(url, data) {
-    return await request(url, 'DELETE', data).catch((error) => console.log(`DELETE ${url} error - ${error}`));
-  }
 }
 
 function handleError(res)  {
   if (!res.ok) throw Error(res.statusText);
-};
+}
 
 async function request(url, method = 'GET', data) {
   const config = {
     method
   };
-  if (method === 'POST' || method === 'PATCH' || method === 'DELETE' || method === 'PUT') {
+  if (method === 'POST') {
     config.body = JSON.stringify(data);
     config.headers = Http.HEADERS;
   }
@@ -52,4 +50,13 @@ async function request(url, method = 'GET', data) {
   ]);
   handleError(response);
   return response.json();
+}
+
+async function requestStatus(url) {
+  const response = await Promise.race([
+    fetch(url),
+    new Promise((res, rej) => setTimeout(() => rej(new Error('Timeout')), 3000))
+  ]);
+  handleError(response);
+  return response.ok;
 }

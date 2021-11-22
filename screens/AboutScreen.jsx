@@ -7,11 +7,6 @@ import Context from '../context';
 
 export default function AboutScreen() {
   const { data } = React.useContext(Context);
-  // console.log('file-data :', data);
-  React.useEffect(() => {
-    console.log('about-MOUNT :', );
-    return () => {console.log('ABOUT-UNMOUNT :', );}
-  }, []);
   return (
       <FlatList
       data={data}
