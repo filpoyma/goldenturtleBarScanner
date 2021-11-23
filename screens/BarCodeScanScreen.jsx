@@ -50,6 +50,8 @@ export default function BarCodeScanScreen({ route, navigation }) {
     })();
   }, []);
 
+
+
   const handleBarCodeScanned = async ({ type, data: id }) => {
     let ticket = {};
     if (!scanned || route.params?.id) {

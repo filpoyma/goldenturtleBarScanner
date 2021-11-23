@@ -26,7 +26,7 @@ const TICKETS = {
     additional: 'SCANNER'
   },
   searchResults: {
-    name: ' РЕЗУЛЬТАТЫ ПОИСКА',
+    name: 'РЕЗУЛЬТАТЫ ПОИСКА',
     color: Colors.primary,
     additional: 'НАЙДЕНО'
   }

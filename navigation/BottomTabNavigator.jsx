@@ -40,8 +40,8 @@ export default function BottomTabNavigator() {
             <Image
               source={require('../assets/images/search.png')}
               style={{
-                width: 60,
-                height: 60,
+                width: 55,
+                height: 55,
                 opacity: color === '#2f95dc' ? 1 : 0.7
               }}
             />
@@ -49,7 +49,7 @@ export default function BottomTabNavigator() {
           tabBarStyle: [
             {
               display: 'flex',
-              height: 95,
+              height: 80,
               elevation: 0,
               borderTopWidth: 0
             },
@@ -68,12 +68,19 @@ export default function BottomTabNavigator() {
           tabBarActiveTintColor: '#2f95dc',
           tabBarHideOnKeyboard: true,
           tabBarIcon: ({ color }) => (
-            <ButtonTab style={{ opacity: color === '#2f95dc' ? 1 : 0.5 }}>ПОИСК</ButtonTab>
+            <Image
+              source={require('../assets/images/search.png')}
+              style={{
+                width: 55,
+                height: 55,
+                opacity: color === '#2f95dc' ? 1 : 0.7
+              }}
+            />
           ),
           tabBarStyle: [
             {
               display: 'flex',
-              height: 95,
+              height: 80,
               elevation: 0,
               borderTopWidth: 0
             },
@@ -93,8 +100,8 @@ export default function BottomTabNavigator() {
             <Image
               source={require('../assets/images/torch.png')}
               style={{
-                width: 60,
-                height: 60,
+                width: 55,
+                height: 55,
                 opacity: isTorch ? 1 : 0.7
               }}
             />

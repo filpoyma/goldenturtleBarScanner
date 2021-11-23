@@ -14,7 +14,7 @@ const SearchPanel = ({ setSearchedTickets }) => {
 
   const onReset = async () => {
     const res = await setTicketToUnused();
-    Alert.alert(`Result ${res}`);
+    Alert.alert(`All tickets became unused: ${res}`);
   };
 
   const onClearLocal = async () => {

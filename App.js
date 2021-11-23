@@ -13,7 +13,7 @@ import { onlineStatus } from './units/asyncFuncs';
  */
 // todo переделать логику, в случае недоступности сети ( проверить как работает текущая логика на устройстве) - DONE
 // todo react-native-community/netinfo - false
-// todo spiner
+// todo spiner - DONE
 // todo обьединить searchTickets(text) && findByTextInStor(text) - DONE
 // todo перевести на mobx
 // todo сохранять в стор по выходу, а работать (искать, сохранять в store)
