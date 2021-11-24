@@ -1,4 +1,5 @@
 import React from 'react';
+import {useSelector} from "react-redux";
 import { View, StyleSheet, TextInput, Keyboard, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -10,7 +11,8 @@ import ImgButton from "./Buttons/ImgButton";
 
 const SearchPanel = ({ setSearchedTickets }) => {
   const [text, onChangeText] = React.useState('');
-  const { netStatus, setLoading } = React.useContext(Context);
+  const { setLoading } = React.useContext(Context);
+  const netStatus = useSelector((store) => store.netStatus);
 
   const onReset = async () => {
     const res = await setTicketToUnused();

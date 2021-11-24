@@ -20,6 +20,7 @@ import { getTicketType } from '../units/convertFuncs';
 import { isObjEmpty } from '../units/checkFincs';
 import TouchebleButton from '../components/Buttons/TouchButton';
 import { Colors } from '../constants/Colors';
+import {useSelector} from "react-redux";
 
 const type = Camera.Constants.Type.back;
 const torchOff = Camera.Constants.FlashMode.off;
@@ -33,8 +34,10 @@ export default function BarCodeScanScreen({ route, navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [ticket, setTicket] = React.useState(welcomeTicket);
-  const { netStatus, setStatusHandler, isTorch, tickets, setTicketsHandler, setLoading } = React.useContext(Context);
+  const { setStatusHandler, isTorch, tickets, setTicketsHandler, setLoading } = React.useContext(Context);
   const isFocused = useIsFocused();
+
+  const netStatus = useSelector((store) => store.netStatus);
 
   useEffect(() => {
     if (route.params && route.params.id) {
