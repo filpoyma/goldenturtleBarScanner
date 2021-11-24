@@ -22,7 +22,7 @@ const TICKETS = {
   greetings: {
     name: 'QR CODE',
     color: Colors.primary,
-    img: require('../assets/images/qr_code2.png'),
+    img: require('../assets/images/qr_code_top.png'),
     additional: 'SCANNER'
   },
   searchResults: {
