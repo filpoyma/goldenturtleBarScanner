@@ -1,27 +1,26 @@
 import React from 'react';
+import {useDispatch, useSelector} from "react-redux";
 // import {Ionicons} from "@expo/vector-icons";
 // import FAwesomeIcon from "react-native-vector-icons/FontAwesome5";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Image, TouchableOpacity } from 'react-native';
 
-// import Colors from "../constants/Colors";
-// import useColorScheme from "../hooks/useColorScheme";
 import BarCodeScanScreen from '../screens/BarCodeScanScreen';
 import AboutScreen from '../screens/AboutScreen';
-import ButtonTab from '../components/Buttons/ButtonTab';
+
 import Null from '../components/Null';
-import Context from '../context';
 import SearchScreen from '../screens/SearchScreen';
-import { Text } from '../components/Themed';
 import { Colors } from '../constants/Colors';
 import LogoTitle from "../components/LogoTitle";
+import {switchTorch} from "../store/actions";
 
 const BottomTab = createBottomTabNavigator();
 
 export default function BottomTabNavigator() {
   // const colorScheme = useColorScheme();
-  const { setTorchHandler, isTorch } = React.useContext(Context);
+  const isTorch = useSelector((state) => state.isTorch);
+  const dispatch = useDispatch();
 
   return (
     <BottomTab.Navigator initialRouteName="BarCodeScan">
@@ -95,7 +94,7 @@ export default function BottomTabNavigator() {
           title: '',
           tabBarShowLabel: false,
           tabBarHideOnKeyboard: true,
-          tabBarButton: (props) => <TouchableOpacity {...props} onPress={setTorchHandler} />,
+          tabBarButton: (props) => <TouchableOpacity {...props} onPress={()=>dispatch(switchTorch())} />,
           tabBarIcon: ({ color }) => (
             <Image
               source={require('../assets/images/torch_too.png')}
@@ -170,10 +169,10 @@ function SearchNavigator() {
 
 const AboutStack = createStackNavigator();
 
-function AboutNavigator() {
-  return (
-    <AboutStack.Navigator>
-      <AboutStack.Screen name="AboutScreen" component={AboutScreen} options={{ headerTitle: 'About' }} />
-    </AboutStack.Navigator>
-  );
-}
+// function AboutNavigator() {
+//   return (
+//     <AboutStack.Navigator>
+//       <AboutStack.Screen name="AboutScreen" component={AboutScreen} options={{ headerTitle: 'About' }} />
+//     </AboutStack.Navigator>
+//   );
+// }

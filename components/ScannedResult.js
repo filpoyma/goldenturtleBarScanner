@@ -5,10 +5,10 @@ import sizes from '../constants/Layout';
 import TICKETS from '../constants/tiketsNames';
 import dayjs from 'dayjs';
 import { Colors } from '../constants/Colors';
-import Context from '../context';
+import {useSelector} from "react-redux";
 
 const ScannedResult = ({ ticketType = {}, ticketData = {} }) => {
-  let { isLoading } = React.useContext(Context);
+  const isLoading = useSelector((store) => store.isLoading);
   if (ticketType.name === TICKETS.notFound.name || ticketType.name === TICKETS.greetings.name)
     return (
       <View style={styles.container(ticketType.color)}>

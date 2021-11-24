@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import {useDispatch, useSelector} from "react-redux";
 
 import { useIsFocused } from '@react-navigation/native';
 import { StyleSheet, Alert } from 'react-native';
@@ -7,7 +8,6 @@ import { BarCodeScanner } from 'expo-barcode-scanner';
 import BarcodeMask from 'react-native-barcode-mask';
 import { Camera } from 'expo-camera';
 
-import Context from '../context';
 import ProgressBar from '../components/ProgressBar';
 import ScannedResult from '../components/ScannedResult';
 import sizes from '../constants/Layout';
@@ -20,7 +20,7 @@ import { getTicketType } from '../units/convertFuncs';
 import { isObjEmpty } from '../units/checkFincs';
 import TouchebleButton from '../components/Buttons/TouchButton';
 import { Colors } from '../constants/Colors';
-import {useSelector} from "react-redux";
+import {setLoading, setNetworkStatus, setTickets} from "../store/actions";
 
 const type = Camera.Constants.Type.back;
 const torchOff = Camera.Constants.FlashMode.off;
@@ -34,10 +34,12 @@ export default function BarCodeScanScreen({ route, navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [ticket, setTicket] = React.useState(welcomeTicket);
-  const { setStatusHandler, isTorch, tickets, setTicketsHandler, setLoading } = React.useContext(Context);
+  const isTorch = useSelector((store) => store.isTorch);
   const isFocused = useIsFocused();
 
+  const dispatch = useDispatch();
   const netStatus = useSelector((store) => store.netStatus);
+  const tickets = useSelector((store) => store.tickets);
 
   useEffect(() => {
     if (route.params && route.params.id) {
@@ -60,9 +62,9 @@ export default function BarCodeScanScreen({ route, navigation }) {
     if (!scanned || route.params?.id) {
       route.params = undefined;
       setScanned(true);
-      setLoading(true);
+      dispatch(setLoading(true));
       ticket = await getTicket(id, netStatus);
-      setLoading(false);
+      dispatch(setLoading(false));
       if (!ticket.err && !isObjEmpty(ticket.data)) {
         //  билет найден
         // ticket = ticketDataConverter(ticket);
@@ -75,14 +77,11 @@ export default function BarCodeScanScreen({ route, navigation }) {
         ticket.data.used = '1';
         const updateStat = await updateTicket(ticket); //  запись использованного билета в удаленную бд
         const updatedTickets = await updateTicketToStor(tickets, ticket); //  запись использованного билета в локальную бд
-        setTicketsHandler(updatedTickets);
+        dispatch(setTickets(updatedTickets));
 
         if (!updateStat.err && updateStat.data?.status === 'ok') {
           // билет "погашен" в удаленной базе
-          setStatusHandler({
-            err: null,
-            isOnline: true
-          });
+          dispatch(setNetworkStatus({err: null, isOnline: true}))
         } else {
           //  'билет не удалось записать в удаленную БД'
           console.warn('ош записи в удаленную бд', updateStat.err);
@@ -90,10 +89,7 @@ export default function BarCodeScanScreen({ route, navigation }) {
           ticket.data.used = '1';
           await addUnSyncTicketToStor(ticket); // записываем билет в локалСтор несинхронизированных билетов
 
-          setStatusHandler({
-            err: updateStat.err,
-            isOnline: false
-          });
+          dispatch(setNetworkStatus({err: null, isOnline: false}))
         }
       }
       if (!ticket.err && isObjEmpty(ticket.data)) {

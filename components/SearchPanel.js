@@ -1,36 +1,37 @@
 import React from 'react';
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import { View, StyleSheet, TextInput, Keyboard, Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import TouchebleButton from './Buttons/TouchButton';
 import sizes from '../constants/Layout';
 import { searchTickets, setTicketToUnused } from '../units/asyncFuncs';
-import Context from '../context';
 import ImgButton from "./Buttons/ImgButton";
+import {setLoading} from "../store/actions";
 
 const SearchPanel = ({ setSearchedTickets }) => {
   const [text, onChangeText] = React.useState('');
-  const { setLoading } = React.useContext(Context);
+
   const netStatus = useSelector((store) => store.netStatus);
+  const dispatch = useDispatch();
 
   const onReset = async () => {
     const res = await setTicketToUnused();
     Alert.alert(`All tickets became unused: ${res}`);
   };
 
-  const onClearLocal = async () => {
-    await AsyncStorage.removeItem('tickets');
-    await AsyncStorage.removeItem('unsynctickets');
-  };
+  // const onClearLocal = async () => {
+  //   await AsyncStorage.removeItem('tickets');
+  //   await AsyncStorage.removeItem('unsynctickets');
+  // };
 
   const onSubmit = async () => {
     if (text.length < 3) return Alert.alert('Ой', 'Введите минимум 3 символа');
     onChangeText('');
     Keyboard.dismiss();
-    setLoading(true);
+    dispatch(setLoading(true));
     const tickets = await searchTickets(text, netStatus);
-    setLoading(false);
+    dispatch(setLoading(false));
     console.log('SearchPanel tickets searched:', tickets.data.length);
     if (tickets.err) return Alert.alert('Ошибка поиска билетов:', tickets.err);
     if (tickets.data.length === 0) Alert.alert('Билеты не найдены');
