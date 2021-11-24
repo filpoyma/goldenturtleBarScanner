@@ -3,7 +3,7 @@ import { StyleSheet, FlatList } from 'react-native';
 import dayjs from 'dayjs'
 
 import { Text, View } from '../components/Themed';
-import Context from '../context';
+import Context from '../../context';
 
 export default function AboutScreen() {
   const { data } = React.useContext(Context);

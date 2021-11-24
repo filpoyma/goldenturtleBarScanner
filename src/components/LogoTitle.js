@@ -9,7 +9,7 @@ const LogoTitle = () => (
     <View style={{ marginLeft: 10}}>
       <Image
         style={{ width: 84, height: 84 }}
-        source={require('../assets/images/turtle.png')}
+        source={require('../../assets/images/turtle.png')}
         resizeMode="contain"
       />
     </View>

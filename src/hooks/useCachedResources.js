@@ -55,16 +55,16 @@ export default function useCachedResources() {
       try {
         // Load fonts
         await Font.loadAsync({
-          FuturaBook: require('../assets/fonts/FuturaPTCondBook.otf')
+          FuturaBook: require('../../assets/fonts/FuturaPTCondBook.otf')
         });
         await Font.loadAsync({
-          FuturaBold: require('../assets/fonts/FuturaPTCondBold.otf')
+          FuturaBold: require('../../assets/fonts/FuturaPTCondBold.otf')
         });
         await Font.loadAsync({
-          FuturaExtraBold: require('../assets/fonts/FuturaPTCondExtraBold.otf')
+          FuturaExtraBold: require('../../assets/fonts/FuturaPTCondExtraBold.otf')
         });
         await Font.loadAsync({
-          FuturaMedium: require('../assets/fonts/FuturaPTCondMedium.otf')
+          FuturaMedium: require('../../assets/fonts/FuturaPTCondMedium.otf')
         });
       } catch (e) {
         console.warn('Load fonts error', e.message);

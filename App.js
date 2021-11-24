@@ -2,8 +2,8 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import Main from './Main';
-import { store } from './store';
+import Main from './src/Main';
+import { store } from './src/store';
 
 export default function App() {
   return (

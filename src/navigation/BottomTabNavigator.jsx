@@ -37,7 +37,7 @@ export default function BottomTabNavigator() {
 
           tabBarIcon: ({ color }) => (
             <Image
-              source={require('../assets/images/search_qr.png')}
+              source={require('../../assets/images/search_qr.png')}
               style={{
                 width: 55,
                 height: 55,
@@ -68,7 +68,7 @@ export default function BottomTabNavigator() {
           tabBarHideOnKeyboard: true,
           tabBarIcon: ({ color }) => (
             <Image
-              source={require('../assets/images/search.png')}
+              source={require('../../assets/images/search.png')}
               style={{
                 width: 55,
                 height: 55,
@@ -97,7 +97,7 @@ export default function BottomTabNavigator() {
           tabBarButton: (props) => <TouchableOpacity {...props} onPress={()=>dispatch(switchTorch())} />,
           tabBarIcon: ({ color }) => (
             <Image
-              source={require('../assets/images/torch_too.png')}
+              source={require('../../assets/images/torch_too.png')}
               style={{
                 width: 55,
                 height: 55,

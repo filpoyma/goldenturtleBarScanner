@@ -54,7 +54,7 @@ const SearchPanel = ({ setSearchedTickets }) => {
           // onFocus={() => onChangeText('')}
         />
         <View style={styles.searchBtn}>
-          <ImgButton imgSrc={require('../assets/images/search.png')} onPress={onSubmit}/>
+          <ImgButton imgSrc={require('../../assets/images/search.png')} onPress={onSubmit}/>
         </View>
       </View>
       <TouchebleButton onPress={onReset} style={{borderColor: 'white'}}>setAllTickToUnused</TouchebleButton>
