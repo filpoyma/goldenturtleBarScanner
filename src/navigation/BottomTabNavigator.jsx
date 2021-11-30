@@ -149,7 +149,6 @@ function SearchNavigator() {
         name="SearchScreen"
         component={SearchScreen}
         options={{
-          // title: `ЗОЛОТАЯ ЧЕРЕПАХА ${currentYear}`,
           headerTitle: () => <LogoTitle />,
           headerStyle: {
             backgroundColor: Colors.primary
