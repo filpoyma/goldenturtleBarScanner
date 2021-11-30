@@ -11,8 +11,9 @@ import TICKETS from '../constants/tiketsNames';
 import SearchPanel from '../components/SearchPanel';
 import { getVisited } from '../units/localStorFuncs';
 import { getTicketType } from '../units/convertFuncs';
-import { View } from '../components/Themed';
+import {View} from '../components/Themed';
 import Null from '../components/Null';
+// import TouchebleButton from "../components/Buttons/TouchButton";
 
 
 export default function SearchScreen({ route, navigation }) {
@@ -78,6 +79,7 @@ export default function SearchScreen({ route, navigation }) {
           <SearchPanel setSearchedTickets={setSTicketsHandler} />
         </View>
       )}
+      {/*<TouchableOpacity onPress={()=>{}}><Text>новый поиск</Text></TouchableOpacity>*/}
     </View>
   );
 }
@@ -87,7 +89,8 @@ const styles = StyleSheet.create({
     flex: 1,
     // paddingTop: 10,
     paddingHorizontal: sizes.border.viewMinX,
-    justifyContent: 'space-evenly'
+    justifyContent: 'space-evenly',
+    alignItems: 'center'
   },
   title: {
     fontSize: 20,

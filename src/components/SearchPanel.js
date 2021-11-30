@@ -3,7 +3,7 @@ import {useDispatch, useSelector} from "react-redux";
 import { View, StyleSheet, TextInput, Keyboard, Alert } from 'react-native';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import TouchebleButton from './Buttons/TouchButton';
+// import TouchebleButton from './Buttons/TouchButton';
 import sizes from '../constants/Layout';
 import { searchTickets, setTicketToUnused } from '../units/asyncFuncs';
 import ImgButton from "./Buttons/ImgButton";
@@ -15,10 +15,10 @@ const SearchPanel = ({ setSearchedTickets }) => {
   const netStatus = useSelector((store) => store.netStatus);
   const dispatch = useDispatch();
 
-  const onReset = async () => {
-    const res = await setTicketToUnused();
-    Alert.alert(`All tickets became unused: ${res}`);
-  };
+  // const onReset = async () => {
+  //   const res = await setTicketToUnused();
+  //   Alert.alert(`All tickets became unused: ${res}`);
+  // };
 
   // const onClearLocal = async () => {
   //   await AsyncStorage.removeItem('tickets');
@@ -57,7 +57,7 @@ const SearchPanel = ({ setSearchedTickets }) => {
           <ImgButton imgSrc={require('../../assets/images/search.png')} onPress={onSubmit}/>
         </View>
       </View>
-      <TouchebleButton onPress={onReset} style={{borderColor: 'white'}}>setAllTickToUnused</TouchebleButton>
+      {/*<TouchebleButton onPress={onReset} style={{borderColor: 'white'}}>setAllTickToUnused</TouchebleButton>*/}
       {/*<TouchebleButton onPress={onClearLocal}>clearLocalTicket</TouchebleButton>*/}
     </View>
   );
