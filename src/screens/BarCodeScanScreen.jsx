@@ -34,10 +34,10 @@ export default function BarCodeScanScreen({ route, navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [ticket, setTicket] = React.useState(welcomeTicket);
-  const isTorch = useSelector((store) => store.isTorch);
-  const isFocused = useIsFocused();
 
+  const isFocused = useIsFocused();
   const dispatch = useDispatch();
+  const isTorch = useSelector((store) => store.isTorch);
   const netStatus = useSelector((store) => store.netStatus);
   const tickets = useSelector((store) => store.tickets);
 
@@ -54,8 +54,6 @@ export default function BarCodeScanScreen({ route, navigation }) {
       setHasPermission(status === 'granted');
     })();
   }, []);
-
-
 
   const handleBarCodeScanned = async ({ type, data: id }) => {
     let ticket = {};
@@ -121,8 +119,7 @@ export default function BarCodeScanScreen({ route, navigation }) {
       <ScannedResult ticketType={ticket.type} ticketData={ticket.data} />
 
       <View style={{ height: sizes.window.finderWidth }}>
-        {route.name === 'SearchScreen' && <SearchPanel />}
-        {route.name === 'BarCodeScanScreen' && isFocused && (
+        {isFocused && (
           <Camera
             onBarCodeScanned={!scanned ? handleBarCodeScanned : undefined}
             type={type}

@@ -1,5 +1,5 @@
 import React from 'react';
-import {useDispatch, useSelector} from "react-redux";
+import { useDispatch, useSelector } from 'react-redux';
 // import {Ionicons} from "@expo/vector-icons";
 // import FAwesomeIcon from "react-native-vector-icons/FontAwesome5";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -7,13 +7,12 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { Image, TouchableOpacity } from 'react-native';
 
 import BarCodeScanScreen from '../screens/BarCodeScanScreen';
-import AboutScreen from '../screens/AboutScreen';
 
 import Null from '../components/Null';
 import SearchScreen from '../screens/SearchScreen';
 import { Colors } from '../constants/Colors';
-import LogoTitle from "../components/LogoTitle";
-import {switchTorch} from "../store/actions";
+import LogoTitle from '../components/LogoTitle';
+import { switchTorch } from '../store/actions';
 
 const BottomTab = createBottomTabNavigator();
 
@@ -94,7 +93,7 @@ export default function BottomTabNavigator() {
           title: '',
           tabBarShowLabel: false,
           tabBarHideOnKeyboard: true,
-          tabBarButton: (props) => <TouchableOpacity {...props} onPress={()=>dispatch(switchTorch())} />,
+          tabBarButton: (props) => <TouchableOpacity {...props} onPress={() => dispatch(switchTorch())} />,
           tabBarIcon: ({ color }) => (
             <Image
               source={require('../../assets/images/torch_too.png')}
@@ -117,8 +116,6 @@ export default function BottomTabNavigator() {
 //   return <Ionicons size={30} style={{marginBottom: -3}} {...props} />;
 // }
 
-// Each tab has its own navigation stack, you can read more about this pattern here:
-// https://reactnavigation.org/docs/tab-based-navigation#a-stack-navigator-for-each-tab
 const BarCodeScanStack = createStackNavigator();
 
 function BarCodeScanNavigator() {
@@ -129,7 +126,7 @@ function BarCodeScanNavigator() {
         component={BarCodeScanScreen}
         options={{
           // title: `ЗОЛОТАЯ ЧЕРЕПАХА ${currentYear}`,
-          headerTitle: () => <LogoTitle/>,
+          headerTitle: () => <LogoTitle />,
           headerStyle: {
             backgroundColor: Colors.primary
           },
@@ -153,7 +150,7 @@ function SearchNavigator() {
         component={SearchScreen}
         options={{
           // title: `ЗОЛОТАЯ ЧЕРЕПАХА ${currentYear}`,
-          headerTitle: () => <LogoTitle/>,
+          headerTitle: () => <LogoTitle />,
           headerStyle: {
             backgroundColor: Colors.primary
           },
@@ -167,8 +164,7 @@ function SearchNavigator() {
   );
 }
 
-const AboutStack = createStackNavigator();
-
+// const AboutStack = createStackNavigator();
 // function AboutNavigator() {
 //   return (
 //     <AboutStack.Navigator>
