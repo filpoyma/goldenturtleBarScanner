@@ -1,9 +1,9 @@
 import React from 'react';
+import {useSelector} from "react-redux";
 
 import { useIsFocused } from '@react-navigation/native';
 import { StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
 
-import Context from '../context';
 import ProgressBar from '../components/ProgressBar';
 import ScannedResult from '../components/ScannedResult';
 import sizes from '../constants/Layout';
@@ -17,11 +17,11 @@ import Null from '../components/Null';
 
 export default function SearchScreen({ route, navigation }) {
   const isFocused = useIsFocused();
-  const { tickets } = React.useContext(Context);
   const [searchedTickets, setSTickets] = React.useState([]);
   const setSTicketsHandler = (tickets) => {
     setSTickets(tickets);
   };
+  const tickets = useSelector((store) => store.tickets);
 
   React.useEffect(() => {
     !isFocused && setSTickets([]);
