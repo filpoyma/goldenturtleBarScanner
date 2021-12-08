@@ -3,7 +3,7 @@ import {useDispatch, useSelector} from "react-redux";
 
 import { useIsFocused } from '@react-navigation/native';
 import { StyleSheet, Alert } from 'react-native';
-import { Text, View } from '../components/Themed';
+import { View } from '../components/Themed';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import BarcodeMask from 'react-native-barcode-mask';
 import { Camera } from 'expo-camera';
@@ -11,9 +11,7 @@ import { Camera } from 'expo-camera';
 import ProgressBar from '../components/ProgressBar';
 import ScannedResult from '../components/ScannedResult';
 import sizes from '../constants/Layout';
-// import { Colors } from "../constants/Colors";
 import TICKETS from '../constants/tiketsNames';
-import SearchPanel from '../components/SearchPanel';
 import { getTicket, syncTickets, updateTicket } from '../units/asyncFuncs';
 import { addUnSyncTicketToStor, getVisited, updateTicketToStor } from '../units/localStorFuncs';
 import { getTicketType } from '../units/convertFuncs';
@@ -21,6 +19,7 @@ import { isObjEmpty } from '../units/checkFincs';
 import TouchebleButton from '../components/Buttons/TouchButton';
 import { Colors } from '../constants/Colors';
 import {setLoading, setNetworkStatus, setTickets} from "../store/actions";
+import Info from "../components/Info";
 
 const type = Camera.Constants.Type.back;
 const torchOff = Camera.Constants.FlashMode.off;
@@ -54,6 +53,7 @@ export default function BarCodeScanScreen({ route, navigation }) {
       setHasPermission(status === 'granted');
     })();
   }, []);
+
 
   const handleBarCodeScanned = async ({ type, data: id }) => {
     let ticket = {};
@@ -103,10 +103,10 @@ export default function BarCodeScanScreen({ route, navigation }) {
   };
 
   if (hasPermission === null) {
-    return <Text>Requesting for camera permission</Text>;
+    return <Info title={'Requesting for camera permission'}/>
   }
   if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
+    return <Info title={'No access to camera'}/>
   }
   return (
     <View style={styles.container}>
@@ -163,23 +163,15 @@ export default function BarCodeScanScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // paddingTop: 10,
     paddingHorizontal: sizes.border.viewMinX,
     justifyContent: 'space-evenly'
   },
   camera: {
     flex: 1,
-    // width: finderWidth,
     justifyContent: 'center',
     alignItems: 'center',
-    // width: 100,
-    // height: 100
-    borderColor: '#ff9792',
-    borderWidth: 1
   },
   button: {
-    // flex: 1,
-    // alignItems: "center",
     justifyContent: 'flex-end',
     backgroundColor: 'transparent',
     marginBottom: 5

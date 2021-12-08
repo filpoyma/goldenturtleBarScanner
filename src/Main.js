@@ -30,6 +30,6 @@ export default function Main() {
   }, []);
 
   const isLoadingComplete = useCachedResources();
-  if (!isLoadingComplete) return null;
-  else return <Navigation colorScheme={colorScheme} />;
+
+  return isLoadingComplete ? <Navigation colorScheme={colorScheme} /> : null;
 }
