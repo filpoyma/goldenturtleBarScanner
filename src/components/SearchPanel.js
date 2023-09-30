@@ -1,13 +1,13 @@
 import React from 'react';
-import {useDispatch, useSelector} from "react-redux";
+import { useDispatch, useSelector } from 'react-redux';
 import { View, StyleSheet, TextInput, Keyboard, Alert } from 'react-native';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // import TouchebleButton from './Buttons/TouchButton';
 import sizes from '../constants/Layout';
-import { searchTickets, setTicketToUnused } from '../units/asyncFuncs';
-import ImgButton from "./Buttons/ImgButton";
-import {setLoading} from "../store/actions";
+import { searchTickets } from '../units/asyncFuncs';
+import ImgButton from './Buttons/ImgButton';
+import { setLoading } from '../store/actions';
 
 const SearchPanel = ({ setSearchedTickets }) => {
   const [text, onChangeText] = React.useState('');
@@ -54,7 +54,7 @@ const SearchPanel = ({ setSearchedTickets }) => {
           // onFocus={() => onChangeText('')}
         />
         <View style={styles.searchBtn}>
-          <ImgButton imgSrc={require('../../assets/images/search.png')} onPress={onSubmit}/>
+          <ImgButton imgSrc={require('../../assets/images/search.png')} onPress={onSubmit} />
         </View>
       </View>
       {/*<TouchebleButton onPress={onReset} style={{borderColor: 'white'}}>setAllTickToUnused</TouchebleButton>*/}
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'transparent',
-    zIndex: 1,
+    zIndex: 1
   },
   input: {
     height: 55,

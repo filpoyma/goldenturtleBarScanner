@@ -1,15 +1,23 @@
-import { BASEURL, KEY } from '../constants/urls';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { findByIdInStor, findByTextInStor, getTicketsArrFromStor } from './localStorFuncs';
-import { localDb } from '../constants/tiketsNames';
-import { Http } from './http';
+import {
+  findByIdInStor,
+  findByTextInStor,
+  getTicketsArrFromStor,
+} from "./localStorFuncs";
+import { localDb } from "../constants/tiketsNames";
+import { Http } from "./http";
+
+const BASEURL = process.env.EXPO_PUBLIC_API_URL;
+const KEY = process.env.EXPO_PUBLIC_API_KEY;
 
 export const onlineStatus = () => Http.getStatus(`${BASEURL}/qrapp`);
 
-export const getAllTickets = () => Http.get(`${BASEURL}/qrapp?id=all&key=${KEY}`);
+export const getAllTickets = () =>
+  Http.get(`${BASEURL}/qrapp?id=all&key=${KEY}`);
 
-export const getTicketById = (id) => Http.get(`${BASEURL}/qrapp?id=${id}&key=${KEY}`);
+export const getTicketById = (id) =>
+  Http.get(`${BASEURL}/qrapp?id=${id}&key=${KEY}`);
 
 export const searchTicketsInDb = async (text) => {
   if (!text) return { data: [], err: null };
@@ -20,7 +28,7 @@ export const updateTicket = (ticket) => {
   const data = {
     id: ticket.data.id,
     used: ticket.data.used,
-    key: 'LulmDZjBr1EwMxHuJ2iFlyo1742sqRcJ'
+    key: KEY,
   };
   return Http.post(`${BASEURL}/qrapp`, data);
 };
@@ -30,15 +38,15 @@ export const getTicket = async (id, netStatus) => {
   if (netStatus.isOnline) {
     await syncTickets(); // синхронизируем билеты, погашенные оффлайн
     ticket = await getTicketById(id); // сначало ищем в удаленной бд
-    if (!ticket.err && (typeof(ticket?.data) === 'object')) {
+    if (!ticket.err && typeof ticket?.data === "object") {
       return { err: null, data: ticket.data }; // билет найден в удаленной базе (или {} если не найден) и нет ош
     }
   }
   const localTicket = await findByIdInStor(id); // поиск в локальной бд, если в удаленной поиск с ош
-  if (localTicket.err && ticket.err) return { err: `${localTicket.err} ${ticket.err}`, data: {}};
-    console.log('asyncFuncs билет найден в локальной БД:');
-    return localTicket; //  билет найден в  локальной базе (или {} если не найден)
-
+  if (localTicket.err && ticket.err)
+    return { err: `${localTicket.err} ${ticket.err}`, data: {} };
+  console.log("asyncFuncs билет найден в локальной БД:");
+  return localTicket; //  билет найден в  локальной базе (или {} если не найден)
 };
 
 export const searchTickets = async (text, netStatus) => {
@@ -47,14 +55,19 @@ export const searchTickets = async (text, netStatus) => {
     await syncTickets();
     tickets = await searchTicketsInDb(text);
     if (!tickets.err && tickets.data && Array.isArray(tickets.data)) {
-      if (!tickets.data.length) console.log(' Билеты в удаленной БД не найдены.');
+      if (!tickets.data.length)
+        console.log(" Билеты в удаленной БД не найдены.");
       return tickets;
     }
   }
   if (tickets.err) {
-    console.warn('Ош. поиска в удаленной базе данных: %s. поиск в локальном сторе...', tickets.err);
+    console.warn(
+      "Ош. поиска в удаленной базе данных: %s. поиск в локальном сторе...",
+      tickets.err
+    );
     tickets = await findByTextInStor(text); //  поиск в локал стор, если ошибка поиска в удаленной базе
-    if (tickets.err) console.warn('Ош. поиска в локальной базе данных.', tickets.err);
+    if (tickets.err)
+      console.warn("Ош. поиска в локальной базе данных.", tickets.err);
     return tickets;
   }
 };
@@ -69,17 +82,17 @@ export const syncTickets = async () => {
     const isSyncError = data.some((el) => el.err);
     if (!isSyncError) {
       await AsyncStorage.removeItem(localDb.unsyncTickets);
-      return 'synced';
+      return "synced";
     }
-    return 'sync error';
-  } else return 'nothing sync';
+    return "sync error";
+  } else return "nothing sync";
 };
 
 export const setTicketToUnused = async () => {
   const tickets = (await getAllTickets()).data;
   if (Array.isArray(tickets) && tickets.length !== 0) {
     const promises = tickets.map((ticket) => {
-      ticket.used = '0';
+      ticket.used = "0";
       return updateTicket({ data: ticket });
     });
     const data = await Promise.all(promises);

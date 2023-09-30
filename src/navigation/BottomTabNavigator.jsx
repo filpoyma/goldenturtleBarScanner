@@ -89,12 +89,12 @@ export default function BottomTabNavigator() {
       <BottomTab.Screen
         name="Settings"
         component={Null}
-        options={({ navigation }) => ({
+        options={() => ({
           title: '',
           tabBarShowLabel: false,
           tabBarHideOnKeyboard: true,
           tabBarButton: (props) => <TouchableOpacity {...props} onPress={() => dispatch(switchTorch())} />,
-          tabBarIcon: ({ color }) => (
+          tabBarIcon: () => (
             <Image
               source={require('../../assets/images/torch_too.png')}
               style={{

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {useDispatch, useSelector} from "react-redux";
+import { useDispatch, useSelector } from 'react-redux';
 
 import { useIsFocused } from '@react-navigation/native';
 import { StyleSheet, Alert } from 'react-native';
@@ -18,8 +18,8 @@ import { getTicketType } from '../units/convertFuncs';
 import { isObjEmpty } from '../units/checkFincs';
 import TouchebleButton from '../components/Buttons/TouchButton';
 import { Colors } from '../constants/Colors';
-import {setLoading, setNetworkStatus, setTickets} from "../store/actions";
-import Info from "../components/Info";
+import { setLoading, setNetworkStatus, setTickets } from '../store/actions';
+import Info from '../components/Info';
 
 const type = Camera.Constants.Type.back;
 const torchOff = Camera.Constants.FlashMode.off;
@@ -29,7 +29,7 @@ const welcomeTicket = {
   data: {}
 };
 
-export default function BarCodeScanScreen({ route, navigation }) {
+export default function BarCodeScanScreen({ route }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [ticket, setTicket] = React.useState(welcomeTicket);
@@ -49,11 +49,10 @@ export default function BarCodeScanScreen({ route, navigation }) {
 
   useEffect(() => {
     (async () => {
-      const { status } = await Camera.requestPermissionsAsync();
+      const { status } = await Camera.requestCameraPermissionsAsync();
       setHasPermission(status === 'granted');
     })();
   }, []);
-
 
   const handleBarCodeScanned = async ({ type, data: id }) => {
     let ticket = {};
@@ -79,7 +78,7 @@ export default function BarCodeScanScreen({ route, navigation }) {
 
         if (!updateStat.err && updateStat.data?.status === 'ok') {
           // билет "погашен" в удаленной базе
-          dispatch(setNetworkStatus({err: null, isOnline: true}))
+          dispatch(setNetworkStatus({ err: null, isOnline: true }));
         } else {
           //  'билет не удалось записать в удаленную БД'
           console.warn('ош записи в удаленную бд', updateStat.err);
@@ -87,7 +86,7 @@ export default function BarCodeScanScreen({ route, navigation }) {
           ticket.data.used = '1';
           await addUnSyncTicketToStor(ticket); // записываем билет в локалСтор несинхронизированных билетов
 
-          dispatch(setNetworkStatus({err: null, isOnline: false}))
+          dispatch(setNetworkStatus({ err: null, isOnline: false }));
         }
       }
       if (!ticket.err && isObjEmpty(ticket.data)) {
@@ -103,10 +102,10 @@ export default function BarCodeScanScreen({ route, navigation }) {
   };
 
   if (hasPermission === null) {
-    return <Info title={'Requesting for camera permission'}/>
+    return <Info title={'Requesting for camera permission'} />;
   }
   if (hasPermission === false) {
-    return <Info title={'No access to camera'}/>
+    return <Info title={'No access to camera'} />;
   }
   return (
     <View style={styles.container}>
@@ -169,7 +168,7 @@ const styles = StyleSheet.create({
   camera: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   button: {
     justifyContent: 'flex-end',

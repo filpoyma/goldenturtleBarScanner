@@ -1,5 +1,5 @@
 import React from 'react';
-import {useSelector} from "react-redux";
+import { useSelector } from 'react-redux';
 
 import { useIsFocused } from '@react-navigation/native';
 import { StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
@@ -11,12 +11,11 @@ import TICKETS from '../constants/tiketsNames';
 import SearchPanel from '../components/SearchPanel';
 import { getVisited } from '../units/localStorFuncs';
 import { getTicketType } from '../units/convertFuncs';
-import {View} from '../components/Themed';
+import { View } from '../components/Themed';
 import Null from '../components/Null';
 // import TouchebleButton from "../components/Buttons/TouchButton";
 
-
-export default function SearchScreen({ route, navigation }) {
+export default function SearchScreen({ _, navigation }) {
   const isFocused = useIsFocused();
   const [searchedTickets, setSTickets] = React.useState([]);
   const setSTicketsHandler = (tickets) => {
@@ -28,13 +27,20 @@ export default function SearchScreen({ route, navigation }) {
     !isFocused && setSTickets([]);
   }, [isFocused]);
 
-
   const onTapTicket = (ticket) => {
-    if(ticket.used == '1') return;
+    if (ticket.used == '1') return;
     Alert.alert(
       'Выбор билета!',
       'Нажимая на кнопку OK, Вы подтверждаете билет. Эта операция невозвратная!',
-      [{ text: 'OK', onPress: () => {onChoiceTicket(ticket.id)} }, { text: 'Cancel' }],
+      [
+        {
+          text: 'OK',
+          onPress: () => {
+            onChoiceTicket(ticket.id);
+          }
+        },
+        { text: 'Cancel' }
+      ],
       { cancelable: false }
     );
   };
@@ -65,7 +71,9 @@ export default function SearchScreen({ route, navigation }) {
           renderItem={(itemDada) => (
             <TouchableOpacity
               activeOpacity={0.5}
-              onPress={() => {onTapTicket(itemDada.item)}}
+              onPress={() => {
+                onTapTicket(itemDada.item);
+              }}
             >
               <ScannedResult
                 ticketType={getTicketType({ data: itemDada.item })}

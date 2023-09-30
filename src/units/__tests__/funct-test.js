@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import {checkNetStatus, getAllTickets, getTicket, getTicketById, onlineStatus, setTicketToUnused} from '../asyncFuncs';
+import { getAllTickets, getTicket, getTicketById, onlineStatus } from '../asyncFuncs';
 // import {syncTickets} from "../localStorFuncs";
 // import renderer from 'react-test-renderer';
 //
@@ -30,8 +30,6 @@ it('getAllTickets', async () => {
 //   expect(await setTicketToUnused()).toBe({});
 // });
 
-
 it('checkNetStatus', async () => {
-  expect((await onlineStatus())).toEqual({data: true, err: null});
+  expect(await onlineStatus()).toEqual({ data: true, err: null });
 });
-

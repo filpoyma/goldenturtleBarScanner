@@ -21,6 +21,6 @@ export default function App() {
 // todo spiner - DONE
 // todo обьединить searchTickets(text) && findByTextInStor(text) - DONE
 // todo перевести на mobx
-// todo сохранять в локал стор по выходу, а работать (искать, сохранять в redux)
+// todo сохранять в локал стор по выходу, а работать (искать, сохранять в redux) - DONE
 // todo переделать на ts
-// todo сделать, чтоб БД возвращала билеты только за текущий год
+// todo сделать, чтоб БД возвращала билеты только за текущий год - DONE
